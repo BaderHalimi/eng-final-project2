@@ -238,3 +238,87 @@ WARNING 2026-01-25 22:26:19,580 log 144333 134468916475584 Not Found: /products/
 WARNING 2026-01-25 22:26:19,582 log 144333 134468916475584 "GET /products/?page=2&category=electronics HTTP/1.1" 404 2968
 WARNING 2026-01-25 22:26:21,404 log 144333 134468916475584 Not Found: /products/
 WARNING 2026-01-25 22:26:21,406 log 144333 134468916475584 "GET /products/?page=2&category=electronics HTTP/1.1" 404 2968
+ERROR 2026-01-25 22:47:25,418 log 145645 138180439307968 Internal Server Error: /dashboard/users/
+Traceback (most recent call last):
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/mystore/dashboard/views.py", line 412, in user_list
+    return render(request, 'dashboard/users/list.html', {
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 174, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/loader_tags.py", line 160, in render
+    return compiled_parent._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 166, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/loader_tags.py", line 66, in render
+    result = block.nodelist.render(context)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/defaulttags.py", line 249, in render
+    nodelist.append(node.render_annotated(context))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/defaulttags.py", line 333, in render
+    return nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1091, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/base.py", line 1052, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/defaulttags.py", line 511, in render
+    url = reverse(view_name, args=args, kwargs=kwargs, current_app=current_app)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/urls/base.py", line 98, in reverse
+    resolved_url = resolver._reverse_with_prefix(view, prefix, *args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/urls/resolvers.py", line 842, in _reverse_with_prefix
+    raise NoReverseMatch(msg)
+django.urls.exceptions.NoReverseMatch: Reverse for 'user_toggle_status' not found. 'user_toggle_status' is not a valid view function or pattern name.
+ERROR 2026-01-25 22:47:25,431 log 145645 138180439307968 "GET /dashboard/users/ HTTP/1.1" 500 198400
