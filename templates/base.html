@@ -786,6 +786,10 @@
     
     <!-- CSRF Token for AJAX -->
     <script>
+        // CSRF Token من Django template tag (أكثر أماناً)
+        const csrftoken = '{{ csrf_token }}';
+        
+        // دالة بديلة لقراءة من الـ cookie إذا لزم الأمر
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -800,7 +804,6 @@
             }
             return cookieValue;
         }
-        const csrftoken = getCookie('csrftoken');
         
         async function secureFetch(url, data = {}) {
             try {

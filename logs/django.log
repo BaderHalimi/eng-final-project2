@@ -322,3 +322,20 @@ Traceback (most recent call last):
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'user_toggle_status' not found. 'user_toggle_status' is not a valid view function or pattern name.
 ERROR 2026-01-25 22:47:25,431 log 145645 138180439307968 "GET /dashboard/users/ HTTP/1.1" 500 198400
+WARNING 2026-01-25 23:34:29,496 log 146943 126001715603136 "POST /cart/add/ HTTP/1.1" 403 2575
+WARNING 2026-01-25 23:34:48,944 log 146943 126001715603136 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-25 23:34:48,948 log 146943 126001715603136 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624
+WARNING 2026-01-25 23:34:55,496 log 146943 126001715603136 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-25 23:34:55,500 log 146943 126001715603136 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624
+WARNING 2026-01-25 23:35:09,772 log 146943 126001715603136 "POST /cart/add/ HTTP/1.1" 403 2575
+WARNING 2026-01-25 23:35:16,602 log 146943 126001715603136 "POST /cart/add/ HTTP/1.1" 403 2575
+WARNING 2026-01-25 23:35:24,092 log 146943 126001715603136 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-25 23:35:24,093 log 146943 126001715603136 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624
+WARNING 2026-01-25 23:35:26,074 log 146943 126001715603136 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-25 23:35:26,076 log 146943 126001715603136 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624
+WARNING 2026-01-25 23:35:36,845 log 146943 126001715603136 "POST /cart/add/ HTTP/1.1" 403 2575
+WARNING 2026-01-25 23:35:53,170 log 146943 126001715603136 "POST /cart/add/ HTTP/1.1" 403 2575
+WARNING 2026-01-25 23:37:23,525 log 148250 137132462044864 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-25 23:37:23,535 log 148250 137132462044864 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624
+WARNING 2026-01-25 23:37:32,051 log 148250 137132462044864 Not Found: /.well-known/appspecific/com.chrome.devtools.json
+WARNING 2026-01-25 23:37:32,060 log 148250 137132462044864 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624

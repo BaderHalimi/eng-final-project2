@@ -27,3 +27,9 @@ Traceback (most recent call last):
     raise DisallowedHost(msg)
 django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '0.0.0.0:8000'. You may need to add '0.0.0.0' to ALLOWED_HOSTS.
 INFO 2026-01-25 22:16:19,892 views 143302 127506908706496 New user registered: bader@local.host
+INFO 2026-01-25 23:34:10,385 views 146943 126001715603136 User logged in: bader@local.host from 127.0.0.1
+WARNING 2026-01-25 23:34:29,457 log 146943 126001715603136 Forbidden (CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.): /cart/add/
+WARNING 2026-01-25 23:35:09,751 log 146943 126001715603136 Forbidden (CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.): /cart/add/
+WARNING 2026-01-25 23:35:16,548 log 146943 126001715603136 Forbidden (CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.): /cart/add/
+WARNING 2026-01-25 23:35:36,797 log 146943 126001715603136 Forbidden (CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.): /cart/add/
+WARNING 2026-01-25 23:35:53,123 log 146943 126001715603136 Forbidden (CSRF token from the 'X-Csrftoken' HTTP header has incorrect length.): /cart/add/

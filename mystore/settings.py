@@ -189,7 +189,7 @@ SESSION_COOKIE_SAMESITE = 'Lax'  # حماية من CSRF
 SESSION_COOKIE_AGE = 1209600  # أسبوعين
 
 CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # False للسماح لـ JavaScript بقراءة الـ CSRF token للـ AJAX
 CSRF_COOKIE_SAMESITE = 'Lax'
 
 # أمان: تدوير الجلسة عند تسجيل الدخول (تلقائي في Django)
