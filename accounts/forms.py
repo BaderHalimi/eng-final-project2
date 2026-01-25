@@ -80,8 +80,8 @@ class SecureRegistrationForm(UserCreationForm):
         """
         password = self.cleaned_data.get('password1')
         
-        if len(password) < 12:
-            raise ValidationError('كلمة المرور يجب أن تكون 12 حرف على الأقل')
+        if len(password) < 8:
+            raise ValidationError('كلمة المرور يجب أن تكون 8 أحرف على الأقل')
         
         if not re.search(r'[A-Z]', password):
             raise ValidationError('كلمة المرور يجب أن تحتوي على حرف كبير')
@@ -153,8 +153,8 @@ class SecurePasswordChangeForm(PasswordChangeForm):
         old_password = self.cleaned_data.get('old_password')
         
         # نفس قواعد التسجيل
-        if len(password) < 12:
-            raise ValidationError('كلمة المرور يجب أن تكون 12 حرف على الأقل')
+        if len(password) < 8:
+            raise ValidationError('كلمة المرور يجب أن تكون 8 أحرف على الأقل')
         
         if not re.search(r'[A-Z]', password):
             raise ValidationError('كلمة المرور يجب أن تحتوي على حرف كبير')
