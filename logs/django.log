@@ -234,3 +234,7 @@ Traceback (most recent call last):
     raise NoReverseMatch(msg)
 django.urls.exceptions.NoReverseMatch: Reverse for 'addresses' not found. 'addresses' is not a valid view function or pattern name.
 ERROR 2026-01-25 22:19:57,804 log 143876 133487741892288 "GET /accounts/profile/ HTTP/1.1" 500 197786
+WARNING 2026-01-25 22:26:19,580 log 144333 134468916475584 Not Found: /products/
+WARNING 2026-01-25 22:26:19,582 log 144333 134468916475584 "GET /products/?page=2&category=electronics HTTP/1.1" 404 2968
+WARNING 2026-01-25 22:26:21,404 log 144333 134468916475584 Not Found: /products/
+WARNING 2026-01-25 22:26:21,406 log 144333 134468916475584 "GET /products/?page=2&category=electronics HTTP/1.1" 404 2968

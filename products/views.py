@@ -69,46 +69,64 @@ class ProductListView(ListView):
         # فقط المنتجات النشطة
         queryset = Product.objects.filter(is_active=True).select_related('category')
         
-        # البحث - آمن باستخدام ORM
-        form = ProductSearchForm(self.request.GET)
-        if form.is_valid():
-            q = form.cleaned_data.get('q')
-            category = form.cleaned_data.get('category')
-            min_price = form.cleaned_data.get('min_price')
-            max_price = form.cleaned_data.get('max_price')
-            sort = form.cleaned_data.get('sort')
-            
-            if q:
-                # أمان: استخدام ORM يمنع SQL Injection
-                queryset = queryset.filter(
-                    Q(name__icontains=q) | Q(description__icontains=q)
-                )
-            
-            if category:
-                queryset = queryset.filter(category=category)
-            
-            if min_price:
-                queryset = queryset.filter(price__gte=min_price)
-            
-            if max_price:
-                queryset = queryset.filter(price__lte=max_price)
-            
-            # الترتيب - آمن: قائمة محددة مسبقاً
-            if sort == 'price_low':
-                queryset = queryset.order_by('price')
-            elif sort == 'price_high':
-                queryset = queryset.order_by('-price')
-            elif sort == 'name':
-                queryset = queryset.order_by('name')
-            else:
-                queryset = queryset.order_by('-created_at')
+        # البحث
+        q = self.request.GET.get('q', '').strip()
+        if q:
+            queryset = queryset.filter(
+                Q(name__icontains=q) | Q(description__icontains=q)
+            )
+        
+        # التصنيف (بالـ slug)
+        category_slug = self.request.GET.get('category', '').strip()
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        
+        # السعر
+        min_price = self.request.GET.get('min_price', '').strip()
+        max_price = self.request.GET.get('max_price', '').strip()
+        if min_price:
+            try:
+                queryset = queryset.filter(price__gte=float(min_price))
+            except ValueError:
+                pass
+        if max_price:
+            try:
+                queryset = queryset.filter(price__lte=float(max_price))
+            except ValueError:
+                pass
+        
+        # المتوفر فقط
+        if self.request.GET.get('in_stock'):
+            queryset = queryset.filter(stock__gt=0)
+        
+        # العروض فقط
+        if self.request.GET.get('sale'):
+            queryset = queryset.filter(discount_price__isnull=False)
+        
+        # الترتيب
+        sort = self.request.GET.get('sort', '')
+        if sort == 'price_asc':
+            queryset = queryset.order_by('price')
+        elif sort == 'price_desc':
+            queryset = queryset.order_by('-price')
+        elif sort == 'newest':
+            queryset = queryset.order_by('-created_at')
+        elif sort == 'rating':
+            queryset = queryset.annotate(avg_rating=Avg('reviews__rating')).order_by('-avg_rating')
+        else:
+            queryset = queryset.order_by('-created_at')
         
         return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = ProductSearchForm(self.request.GET)
         context['categories'] = Category.objects.filter(is_active=True)
+        
+        # الحصول على التصنيف الحالي للعرض
+        category_slug = self.request.GET.get('category', '')
+        if category_slug:
+            context['current_category'] = Category.objects.filter(slug=category_slug).first()
+        
         return context
 
 
