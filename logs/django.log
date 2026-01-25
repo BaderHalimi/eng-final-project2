@@ -1,0 +1,39 @@
+WARNING 2026-01-25 21:17:12,958 log 139813 123916016154304 "GET / HTTP/1.1" 400 77724
+WARNING 2026-01-25 21:17:15,136 log 139813 123916007761600 "GET /favicon.ico HTTP/1.1" 400 77667
+WARNING 2026-01-25 21:17:26,933 log 139813 123916007761600 Not Found: /favicon.ico
+WARNING 2026-01-25 21:17:26,939 log 139813 123916007761600 "GET /favicon.ico HTTP/1.1" 404 4105
+ERROR 2026-01-25 21:53:33,129 log 141189 138416000853696 Internal Server Error: /accounts/login/
+Traceback (most recent call last):
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/views/decorators/cache.py", line 80, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/views/decorators/http.py", line 64, in inner
+    return func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/mystore/accounts/views.py", line 196, in login_view
+    return render(request, 'accounts/login.html', {'form': form})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/template/loader.py", line 19, in get_template
+    raise TemplateDoesNotExist(template_name, chain=chain)
+django.template.exceptions.TemplateDoesNotExist: accounts/login.html
+ERROR 2026-01-25 21:53:33,149 log 141189 138416000853696 "GET /accounts/login/ HTTP/1.1" 500 107935
+WARNING 2026-01-25 21:53:38,877 log 141189 138416000853696 Not Found: /login/
+WARNING 2026-01-25 21:53:38,878 log 141189 138416000853696 "GET /login/ HTTP/1.1" 404 4345
