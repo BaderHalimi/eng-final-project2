@@ -26,3 +26,4 @@ Traceback (most recent call last):
   File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/http/request.py", line 205, in get_host
     raise DisallowedHost(msg)
 django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '0.0.0.0:8000'. You may need to add '0.0.0.0' to ALLOWED_HOSTS.
+INFO 2026-01-25 22:16:19,892 views 143302 127506908706496 New user registered: bader@local.host

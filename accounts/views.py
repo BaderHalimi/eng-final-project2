@@ -214,6 +214,10 @@ def logout_view(request):
 @require_http_methods(["GET", "POST"])
 def profile_view(request):
     """عرض وتعديل الملف الشخصي"""
+    from orders.models import Order
+    from cart.models import Wishlist
+    from django.db.models import Sum
+    
     if request.method == 'POST':
         form = ProfileUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
@@ -224,13 +228,36 @@ def profile_view(request):
     else:
         form = ProfileUpdateForm(instance=request.user)
     
+    # إحصائيات المستخدم
+    orders = Order.objects.filter(user=request.user)
+    orders_count = orders.count()
+    completed_orders = orders.filter(status='delivered').count()
+    total_spent = orders.filter(status='delivered').aggregate(total=Sum('total'))['total'] or 0
+    
+    # المفضلة
+    wishlist_count = Wishlist.objects.filter(user=request.user).count()
+    
+    # آخر الطلبات
+    recent_orders = orders.order_by('-created_at')[:5]
+    
+    # العنوان الافتراضي
+    default_address = request.user.addresses.filter(is_default=True).first()
+    if not default_address:
+        default_address = request.user.addresses.first()
+    
     addresses = request.user.addresses.all()
     activities = request.user.activities.all()[:10]
     
     return render(request, 'accounts/profile.html', {
         'form': form,
         'addresses': addresses,
-        'activities': activities
+        'activities': activities,
+        'orders_count': orders_count,
+        'completed_orders': completed_orders,
+        'total_spent': total_spent,
+        'wishlist_count': wishlist_count,
+        'recent_orders': recent_orders,
+        'default_address': default_address,
     })
 
 
@@ -271,19 +298,70 @@ def add_address_view(request):
     if request.method == 'POST':
         form = AddressForm(request.POST)
         address_type = request.POST.get('address_type', 'shipping')
+        is_default = request.POST.get('is_default') == 'on'
         
         if form.is_valid():
+            # إذا كان العنوان الافتراضي، أزل الافتراضي من العناوين الأخرى
+            if is_default:
+                Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
+            
             Address.objects.create(
                 user=request.user,
                 address_type=address_type,
+                is_default=is_default,
                 **form.cleaned_data
             )
             messages.success(request, 'تم إضافة العنوان')
-            return redirect('accounts:profile')
+            return redirect('accounts:addresses')
     else:
         form = AddressForm()
     
     return render(request, 'accounts/add_address.html', {'form': form})
+
+
+@login_required
+@csrf_protect
+@require_http_methods(["GET"])
+def addresses_view(request):
+    """عرض جميع العناوين"""
+    addresses = request.user.addresses.all().order_by('-is_default', '-created_at')
+    return render(request, 'accounts/addresses.html', {'addresses': addresses})
+
+
+@login_required
+@csrf_protect
+@require_http_methods(["GET", "POST"])
+def edit_profile_view(request):
+    """تعديل الملف الشخصي"""
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            log_activity(request.user, 'profile_update', request)
+            messages.success(request, 'تم تحديث الملف الشخصي')
+            return redirect('accounts:profile')
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+    
+    return render(request, 'accounts/edit_profile.html', {'form': form})
+
+
+@login_required
+@csrf_protect
+@require_http_methods(["POST"])
+def set_default_address_view(request, address_id):
+    """تعيين عنوان كافتراضي"""
+    address = get_object_or_404(Address, id=address_id, user=request.user)
+    
+    # إزالة الافتراضي من العناوين الأخرى
+    Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
+    
+    # تعيين هذا العنوان كافتراضي
+    address.is_default = True
+    address.save()
+    
+    messages.success(request, 'تم تعيين العنوان كافتراضي')
+    return redirect('accounts:addresses')
 
 
 @login_required
