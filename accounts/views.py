@@ -298,9 +298,11 @@ def add_address_view(request):
     if request.method == 'POST':
         form = AddressForm(request.POST)
         address_type = request.POST.get('address_type', 'shipping')
-        is_default = request.POST.get('is_default') == 'on'
         
         if form.is_valid():
+            # استخراج is_default من cleaned_data
+            is_default = form.cleaned_data.pop('is_default', False)
+            
             # إذا كان العنوان الافتراضي، أزل الافتراضي من العناوين الأخرى
             if is_default:
                 Address.objects.filter(user=request.user, is_default=True).update(is_default=False)

@@ -351,7 +351,7 @@ def order_list(request):
 @staff_required
 def order_detail(request, pk):
     """تفاصيل الطلب"""
-    order = get_object_or_404(Order.objects.select_related('user', 'shipping_address', 'billing_address'), pk=pk)
+    order = get_object_or_404(Order.objects.select_related('user'), pk=pk)
     items = order.items.select_related('product').all()
     
     return render(request, 'dashboard/orders/detail.html', {

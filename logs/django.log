@@ -339,3 +339,76 @@ WARNING 2026-01-25 23:37:23,525 log 148250 137132462044864 Not Found: /.well-kno
 WARNING 2026-01-25 23:37:23,535 log 148250 137132462044864 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624
 WARNING 2026-01-25 23:37:32,051 log 148250 137132462044864 Not Found: /.well-known/appspecific/com.chrome.devtools.json
 WARNING 2026-01-25 23:37:32,060 log 148250 137132462044864 "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 4624
+ERROR 2026-01-25 23:39:22,201 log 148334 127293727962816 Internal Server Error: /accounts/address/add/
+Traceback (most recent call last):
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/utils/decorators.py", line 192, in _view_wrapper
+    result = _process_exception(request, e)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/utils/decorators.py", line 190, in _view_wrapper
+    response = view_func(request, *args, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/views/decorators/http.py", line 64, in inner
+    return func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/mystore/accounts/views.py", line 308, in add_address_view
+    Address.objects.create(
+TypeError: django.db.models.query.QuerySet.create() got multiple values for keyword argument 'is_default'
+ERROR 2026-01-25 23:39:22,222 log 148334 127293727962816 "POST /accounts/address/add/ HTTP/1.1" 500 93190
+ERROR 2026-01-25 23:41:45,786 log 148617 139833382004416 Internal Server Error: /dashboard/orders/bb8e0992-5927-4412-b1f3-655f1881b6be/
+Traceback (most recent call last):
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/core/handlers/base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/contrib/auth/decorators.py", line 59, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/mystore/dashboard/views.py", line 354, in order_detail
+    order = get_object_or_404(Order.objects.select_related('user', 'shipping_address', 'billing_address'), pk=pk)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/shortcuts.py", line 90, in get_object_or_404
+    return queryset.get(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/query.py", line 635, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/query.py", line 372, in __len__
+    self._fetch_all()
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/query.py", line 2000, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/query.py", line 95, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1611, in execute_sql
+    sql, params = self.as_sql()
+                  ^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 767, in as_sql
+    extra_select, order_by, group_by = self.pre_sql_setup(
+                                       ^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 86, in pre_sql_setup
+    self.setup_query(with_col_aliases=with_col_aliases)
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 75, in setup_query
+    self.select, self.klass_info, self.annotation_col_map = self.get_select(
+                                                            ^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 300, in get_select
+    related_klass_infos = self.get_related_selections(select, select_mask)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/bader/Desktop/django_projects/venv/lib/python3.12/site-packages/django/db/models/sql/compiler.py", line 1231, in get_related_selections
+    raise FieldError(
+django.core.exceptions.FieldError: Non-relational field given in select_related: 'shipping_address'. Choices are: user
+ERROR 2026-01-25 23:41:45,796 log 148617 139833382004416 "GET /dashboard/orders/bb8e0992-5927-4412-b1f3-655f1881b6be/ HTTP/1.1" 500 146661
