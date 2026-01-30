@@ -1,11 +1,12 @@
 # Django Framework
-Django>=6.0.1,<7.0
+Django
 
 # Password Hashing - Argon2 (أقوى خوارزمية تشفير)
-argon2-cffi>=23.1.0
+argon2-cffi
 
 # HTML Sanitization - تنظيف المدخلات لحماية من XSS
-bleach>=6.0.0
+bleach
 
 # Image Processing - للتعامل مع الصور
-Pillow>=10.0.0
+Pillow
+bandit
