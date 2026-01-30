@@ -34,7 +34,7 @@ The output **must be valid JSON only** and follow the unified schema below. You 
     "name": "Vulnerability title",
     "location": "File path or Endpoint",
     "source": "AI",
-    "severity": "Critical | High | Medium | Low | Informational",
+    "severity": "High | Medium | Low | Informational",
     "risk": 0,
     "evidence": "Exact code snippet or clear logical flaw",
     "explain": "Detailed technical explanation of the vulnerability and its impact",
