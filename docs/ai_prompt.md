@@ -39,8 +39,9 @@ Do not analyze or report vulnerabilities related to **supply chain attacks** inc
   "explain": "Detailed technical explanation of the vulnerability and its impact",
   "fix": "Clear and actionable remediation steps",
   "tags": ["OWASP A01: Broken Access Control", "CWE-XXX"]
+```
 
-## Mandatory Notes
+### Mandatory Notes
 1. The **risk score** must be between **0 and 100**.  
 2. Each vulnerability must be mapped to the appropriate **OWASP** and **CWE** classification.  
 3. If no vulnerabilities are identified, return an empty JSON array: `[]`.  
