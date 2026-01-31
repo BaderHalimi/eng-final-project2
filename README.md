@@ -71,6 +71,13 @@ venv\Scripts\activate  # Windows
 # تثبيت المتطلبات
 pip install -r requirements.txt
 
+# إعداد المتغيرات البيئية
+# انسخ ملف .env.example إلى .env وقم بتعديل القيم
+cp .env.example .env
+# قم بتوليد SECRET_KEY جديد:
+# python -c 'import secrets; print(secrets.token_urlsafe(50))'
+# ثم ضعه في DJANGO_SECRET_KEY في ملف .env
+
 # إعداد قاعدة البيانات
 python manage.py migrate
 
