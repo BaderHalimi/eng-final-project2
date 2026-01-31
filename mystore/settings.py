@@ -22,12 +22,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # أمان: في الإنتاج استخدم متغير بيئة
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-q9by@oqgr3@=+kaylu=xlth)092uy33qt%uh%p7a^$v)$dnd5k')
+# يجب تعيين DJANGO_SECRET_KEY في البيئة الإنتاجية
+# لإنشاء مفتاح آمن: python -c 'import secrets; print(secrets.token_urlsafe(50))'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError('DJANGO_SECRET_KEY environment variable must be set')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+# القيمة الافتراضية هي False للأمان
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# يجب تعيين DJANGO_ALLOWED_HOSTS في البيئة الإنتاجية
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if os.environ.get('DJANGO_ALLOWED_HOSTS') else ['localhost', '127.0.0.1']
 
 
 # Application definition
