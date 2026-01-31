@@ -477,3 +477,154 @@ def sales_report(request):
     return render(request, 'dashboard/reports/sales.html', {
         'daily_sales': list(daily_sales),
     })
+
+
+# ====================================================================
+# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
+# نقاط نهاية ضعيفة للاختبار الأمني فقط
+# ====================================================================
+
+import os
+import subprocess
+from django.db import connection
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
+
+# GT-19: SQL Injection in Dashboard Search
+def dashboard_search(request):
+    """
+    VULNERABLE: SQL Injection
+    ثغرة حقن SQL في لوحة التحكم
+    """
+    table = request.GET.get('table', 'products_product')
+    column = request.GET.get('column', 'name')
+    query = request.GET.get('q', '')
+    
+    # VULNERABILITY: Direct SQL without parameterization
+    with connection.cursor() as cursor:
+        sql = f"SELECT * FROM {table} WHERE {column} LIKE '%{query}%' LIMIT 100"
+        cursor.execute(sql)
+        columns = [col[0] for col in cursor.description]
+        results = cursor.fetchall()
+    
+    data = []
+    for row in results:
+        data.append(dict(zip(columns, row)))
+    
+    return JsonResponse({'results': data, 'count': len(data)})
+
+
+# GT-20: Command Injection in Backup
+def run_backup(request):
+    """
+    VULNERABLE: Command Injection
+    ثغرة حقن أوامر في النسخ الاحتياطي
+    """
+    backup_name = request.GET.get('name', 'backup')
+    destination = request.GET.get('dest', '/tmp')
+    
+    # VULNERABILITY: Unsafe command execution
+    command = f"tar -czf {destination}/{backup_name}.tar.gz /var/www/mystore"
+    
+    try:
+        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT, timeout=10)
+        return HttpResponse(f"<pre>Backup successful:\n{result.decode()}</pre>")
+    except subprocess.TimeoutExpired:
+        return HttpResponse("<pre>Backup timeout</pre>", status=500)
+    except subprocess.CalledProcessError as e:
+        return HttpResponse(f"<pre>Error: {e.output.decode()}</pre>", status=500)
+
+
+# GT-21: Path Traversal in Log File Reader
+def read_log_file(request):
+    """
+    VULNERABLE: Path Traversal
+    ثغرة اختراق المسار في قراءة السجلات
+    """
+    filename = request.GET.get('file', 'app.log')
+    
+    # VULNERABILITY: No path validation
+    log_path = os.path.join('/var/log/mystore', filename)
+    
+    try:
+        with open(log_path, 'r') as f:
+            content = f.read()
+        return HttpResponse(f"<pre>{content}</pre>")
+    except FileNotFoundError:
+        return HttpResponse('File not found', status=404)
+    except Exception as e:
+        return HttpResponse(f'Error: {str(e)}', status=500)
+
+
+# GT-22: Missing Authentication in Bulk Delete
+@csrf_exempt
+def bulk_delete_users(request):
+    """
+    VULNERABLE: Missing Authentication + CSRF
+    ثغرة عدم وجود مصادقة + CSRF
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    import json
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    
+    user_ids = data.get('user_ids', [])
+    
+    if not user_ids:
+        return JsonResponse({'error': 'user_ids required'}, status=400)
+    
+    # VULNERABILITY: No authentication or authorization check
+    deleted_count = CustomUser.objects.filter(id__in=user_ids).delete()[0]
+    
+    return JsonResponse({
+        'status': 'success',
+        'deleted': deleted_count,
+        'message': f'{deleted_count} users deleted'
+    })
+
+
+# GT-23: Sensitive Information Disclosure - System Info
+def system_info(request):
+    """
+    VULNERABLE: Sensitive Information Disclosure
+    ثغرة كشف معلومات حساسة
+    """
+    # VULNERABILITY: Exposing sensitive configuration
+    info = {
+        'secret_key': settings.SECRET_KEY,
+        'debug': settings.DEBUG,
+        'database': settings.DATABASES['default'],
+        'allowed_hosts': settings.ALLOWED_HOSTS,
+        'installed_apps': settings.INSTALLED_APPS,
+        'environment': dict(os.environ),
+    }
+    
+    return JsonResponse(info)
+
+
+# GT-24: Code Injection via eval()
+def eval_expression(request):
+    """
+    VULNERABLE: Code Injection
+    ثغرة حقن كود عبر eval
+    """
+    expr = request.GET.get('expr', '1+1')
+    
+    # VULNERABILITY: Using eval() on user input
+    try:
+        result = eval(expr)
+        return JsonResponse({
+            'expression': expr,
+            'result': str(result)
+        })
+    except Exception as e:
+        return JsonResponse({
+            'expression': expr,
+            'error': str(e)
+        }, status=400)

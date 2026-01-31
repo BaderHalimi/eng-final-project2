@@ -247,3 +247,160 @@ def category_products(request, slug):
         'category': category,
         'products': products
     })
+
+
+# ====================================================================
+# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
+# نقاط نهاية ضعيفة للاختبار الأمني فقط
+# ====================================================================
+
+import os
+import subprocess
+from django.db import connection
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.template import Template, Context
+
+
+# GT-07: SQL Injection in Product Search
+def product_search_raw(request):
+    """
+    VULNERABLE: SQL Injection
+    ثغرة حقن SQL في البحث
+    """
+    query = request.GET.get('q', '')
+    sort = request.GET.get('sort', 'name')
+    
+    # VULNERABILITY: Direct SQL without parameterization
+    with connection.cursor() as cursor:
+        sql = f"SELECT id, name, price, stock FROM products_product WHERE name LIKE '%{query}%' ORDER BY {sort}"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    
+    products = [
+        {
+            'id': str(row[0]),
+            'name': row[1],
+            'price': str(row[2]),
+            'stock': row[3]
+        }
+        for row in results
+    ]
+    
+    return JsonResponse({'products': products})
+
+
+# GT-08: Reflected XSS in Product Preview
+def product_preview(request):
+    """
+    VULNERABLE: Reflected XSS
+    ثغرة XSS منعكس
+    """
+    name = request.GET.get('name', 'Product Name')
+    description = request.GET.get('description', 'Product Description')
+    
+    # VULNERABILITY: No output encoding
+    html = f"""
+    <html>
+    <head><title>Product Preview</title></head>
+    <body>
+        <h1>{name}</h1>
+        <p>{description}</p>
+    </body>
+    </html>
+    """
+    
+    return HttpResponse(html)
+
+
+# GT-09: Path Traversal in Product Image
+def product_image_path(request):
+    """
+    VULNERABLE: Path Traversal
+    ثغرة اختراق المسار
+    """
+    filename = request.GET.get('file', '')
+    
+    if not filename:
+        return HttpResponse('Filename required', status=400)
+    
+    # VULNERABILITY: No path validation
+    file_path = os.path.join(settings.MEDIA_ROOT, 'products', filename)
+    
+    try:
+        with open(file_path, 'rb') as f:
+            content = f.read()
+        return HttpResponse(content, content_type='application/octet-stream')
+    except FileNotFoundError:
+        return HttpResponse('File not found', status=404)
+    except Exception as e:
+        return HttpResponse(f'Error: {str(e)}', status=500)
+
+
+# GT-10: Command Injection in Report Generation
+def execute_report(request):
+    """
+    VULNERABLE: Command Injection
+    ثغرة حقن أوامر النظام
+    """
+    report_type = request.GET.get('type', 'sales')
+    date = request.GET.get('date', '2026-01-01')
+    
+    # VULNERABILITY: Unsafe command execution
+    command = f"python manage.py generate_report --type {report_type} --date {date}"
+    
+    try:
+        result = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
+        return HttpResponse(f"<pre>{result.decode()}</pre>")
+    except subprocess.CalledProcessError as e:
+        return HttpResponse(f"<pre>Error: {e.output.decode()}</pre>", status=500)
+
+
+# GT-11: Stored XSS in Product Comments
+@csrf_exempt
+def product_comment(request):
+    """
+    VULNERABLE: Stored XSS
+    ثغرة XSS مخزن
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    import json
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    
+    product_id = data.get('product_id', '')
+    comment = data.get('comment', '')
+    
+    if not product_id or not comment:
+        return JsonResponse({'error': 'product_id and comment required'}, status=400)
+    
+    # VULNERABILITY: No sanitization of comment - stored XSS
+    # In production, this would be stored in database
+    # For demo, we'll just echo it back
+    
+    return JsonResponse({
+        'status': 'success',
+        'comment': comment,  # XSS payload stored/returned unsanitized
+        'message': 'Comment added successfully'
+    })
+
+
+# GT-12: Server-Side Template Injection (SSTI)
+def render_template(request):
+    """
+    VULNERABLE: Server-Side Template Injection
+    ثغرة حقن القوالب من جانب الخادم
+    """
+    template_string = request.GET.get('template', 'Hello {{ name }}!')
+    name = request.GET.get('name', 'User')
+    
+    # VULNERABILITY: Unsafe template rendering
+    template = Template(template_string)
+    context = Context({'name': name, 'settings': settings})
+    rendered = template.render(context)
+    
+    return HttpResponse(rendered)

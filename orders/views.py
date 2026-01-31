@@ -385,3 +385,203 @@ def remove_coupon(request):
         'success': True,
         'message': 'تم إزالة الكوبون'
     })
+
+
+# ====================================================================
+# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
+# نقاط نهاية ضعيفة للاختبار الأمني فقط
+# ====================================================================
+
+import xml.etree.ElementTree as ET
+import yaml
+from django.db import connection
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+# GT-13: SQL Injection in Order Search
+def order_search(request):
+    """
+    VULNERABLE: SQL Injection
+    ثغرة حقن SQL في البحث عن الطلبات
+    """
+    order_number = request.GET.get('order_number', '')
+    status = request.GET.get('status', '')
+    
+    # VULNERABILITY: Direct SQL without parameterization
+    with connection.cursor() as cursor:
+        sql = f"SELECT id, order_number, total, status FROM orders_order WHERE order_number LIKE '%{order_number}%'"
+        if status:
+            sql += f" AND status = '{status}'"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    
+    orders = [
+        {
+            'id': str(row[0]),
+            'order_number': row[1],
+            'total': str(row[2]),
+            'status': row[3]
+        }
+        for row in results
+    ]
+    
+    return JsonResponse({'orders': orders})
+
+
+# GT-14: XXE - XML External Entity Injection
+@csrf_exempt
+def import_orders_xml(request):
+    """
+    VULNERABLE: XXE Injection
+    ثغرة حقن الكيانات الخارجية XML
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    xml_data = request.body.decode('utf-8')
+    
+    if not xml_data:
+        return JsonResponse({'error': 'No XML data provided'}, status=400)
+    
+    try:
+        # VULNERABILITY: No XXE protection
+        root = ET.fromstring(xml_data)
+        
+        orders_imported = []
+        for order_elem in root.findall('order'):
+            order_data = {
+                'order_number': order_elem.find('order_number').text if order_elem.find('order_number') is not None else '',
+                'total': order_elem.find('total').text if order_elem.find('total') is not None else '0',
+                'status': order_elem.find('status').text if order_elem.find('status') is not None else 'pending'
+            }
+            orders_imported.append(order_data)
+        
+        return JsonResponse({
+            'status': 'success',
+            'imported': len(orders_imported),
+            'orders': orders_imported
+        })
+    except ET.ParseError as e:
+        return JsonResponse({'error': f'XML parsing error: {str(e)}'}, status=400)
+
+
+# GT-15: Insecure YAML Deserialization
+@csrf_exempt
+def import_orders_yaml(request):
+    """
+    VULNERABLE: Insecure YAML Deserialization
+    ثغرة فك تسلسل YAML غير آمن
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    yaml_data = request.body.decode('utf-8')
+    
+    if not yaml_data:
+        return JsonResponse({'error': 'No YAML data provided'}, status=400)
+    
+    try:
+        # VULNERABILITY: Using unsafe yaml.load instead of yaml.safe_load
+        data = yaml.load(yaml_data, Loader=yaml.Loader)
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'YAML processed',
+            'data': str(data)
+        })
+    except yaml.YAMLError as e:
+        return JsonResponse({'error': f'YAML error: {str(e)}'}, status=400)
+
+
+# GT-16: IDOR in Order Invoice
+def order_invoice(request, order_id):
+    """
+    VULNERABLE: IDOR (Insecure Direct Object Reference)
+    ثغرة الوصول المباشر غير الآمن للكائنات
+    """
+    # VULNERABILITY: No authentication or ownership check
+    try:
+        order = Order.objects.get(id=order_id)
+        
+        invoice_data = {
+            'order_id': str(order.id),
+            'order_number': order.order_number,
+            'customer_email': order.user.email,
+            'customer_name': order.user.get_full_name(),
+            'total': str(order.total),
+            'status': order.status,
+            'created_at': str(order.created_at),
+            'shipping_address': str(order.shipping_address) if order.shipping_address else None,
+        }
+        
+        return JsonResponse(invoice_data)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
+
+
+# GT-17: Mass Assignment in Order Status Update
+@csrf_exempt
+def update_order_status(request):
+    """
+    VULNERABLE: Mass Assignment
+    ثغرة التعيين الشامل
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+    except:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    
+    order_id = data.get('order_id')
+    
+    if not order_id:
+        return JsonResponse({'error': 'order_id required'}, status=400)
+    
+    try:
+        order = Order.objects.get(id=order_id)
+        
+        # VULNERABILITY: Accepting all fields from user input - mass assignment
+        for key, value in data.items():
+            if hasattr(order, key) and key != 'id':
+                setattr(order, key, value)
+        
+        order.save()
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Order updated',
+            'order': {
+                'id': str(order.id),
+                'status': order.status,
+                'total': str(order.total)
+            }
+        })
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
+
+
+# GT-18: Information Disclosure - Export All Orders
+def export_orders(request):
+    """
+    VULNERABLE: Information Disclosure - No Authentication
+    ثغرة كشف المعلومات - بدون مصادقة
+    """
+    # VULNERABILITY: No authentication check
+    orders = Order.objects.all().select_related('user')[:100]
+    
+    orders_data = []
+    for order in orders:
+        orders_data.append({
+            'id': str(order.id),
+            'order_number': order.order_number,
+            'customer_email': order.user.email,
+            'customer_name': order.user.get_full_name(),
+            'total': str(order.total),
+            'status': order.status,
+            'created_at': str(order.created_at),
+        })
+    
+    return JsonResponse({'orders': orders_data})

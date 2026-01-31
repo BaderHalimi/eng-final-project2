@@ -21,19 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# أمان: في الإنتاج استخدم متغير بيئة
-# يجب تعيين DJANGO_SECRET_KEY في البيئة الإنتاجية
-# لإنشاء مفتاح آمن: python -c 'import secrets; print(secrets.token_urlsafe(50))'
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-if not SECRET_KEY:
-    raise ValueError('DJANGO_SECRET_KEY environment variable must be set')
+# GT-28: VULNERABILITY - Hardcoded Secret Key
+# ثغرة: مفتاح سري مكتوب مباشرة في الكود
+SECRET_KEY = 'django-insecure-test-key-w8x7y9z0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-# القيمة الافتراضية هي False للأمان
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+# GT-29: VULNERABILITY - Debug Mode Enabled
+# ثغرة: وضع التصحيح مفعل في الإنتاج
+DEBUG = True
 
-# يجب تعيين DJANGO_ALLOWED_HOSTS في البيئة الإنتاجية
-ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if os.environ.get('DJANGO_ALLOWED_HOSTS') else ['localhost', '127.0.0.1']
+# ALLOWED_HOSTS configuration
+ALLOWED_HOSTS = ['*']  # VULNERABILITY: Allowing all hosts
 
 
 # Application definition
@@ -188,15 +186,16 @@ SECURE_BROWSER_XSS_FILTER = True
 # أمان: منع عرض الموقع في iframe
 X_FRAME_OPTIONS = 'DENY'
 
-# أمان: إعدادات الكوكيز
-SESSION_COOKIE_SECURE = not DEBUG  # HTTPS فقط
-SESSION_COOKIE_HTTPONLY = True  # JavaScript لا يستطيع الوصول
-SESSION_COOKIE_SAMESITE = 'Lax'  # حماية من CSRF
+# GT-30: VULNERABILITY - Insecure Cookie Configuration
+# ثغرة: إعدادات كوكيز غير آمنة
+SESSION_COOKIE_SECURE = False  # VULNERABILITY: Not enforcing HTTPS
+SESSION_COOKIE_HTTPONLY = False  # VULNERABILITY: JavaScript can access cookies
+SESSION_COOKIE_SAMESITE = 'None'  # VULNERABILITY: No CSRF protection
 SESSION_COOKIE_AGE = 1209600  # أسبوعين
 
-CSRF_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_HTTPONLY = False  # False للسماح لـ JavaScript بقراءة الـ CSRF token للـ AJAX
-CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False  # VULNERABILITY
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'None'  # VULNERABILITY
 
 # أمان: تدوير الجلسة عند تسجيل الدخول (تلقائي في Django)
 SESSION_SAVE_EVERY_REQUEST = True

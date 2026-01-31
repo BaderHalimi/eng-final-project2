@@ -405,3 +405,197 @@ class SecurePasswordResetView(PasswordResetView):
 class SecurePasswordResetConfirmView(PasswordResetConfirmView):
     template_name = 'accounts/password_reset_confirm.html'
     success_url = reverse_lazy('accounts:password_reset_complete')
+
+
+# ====================================================================
+# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
+# نقاط نهاية ضعيفة للاختبار الأمني فقط
+# ====================================================================
+
+import pickle
+import base64
+import hashlib
+from django.db import connection
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+# GT-01: SQL Injection in user search
+def user_search(request):
+    """
+    VULNERABLE: SQL Injection
+    ثغرة حقن SQL
+    """
+    query = request.GET.get('q', '')
+    
+    # VULNERABILITY: Direct SQL query without parameterization
+    with connection.cursor() as cursor:
+        sql = f"SELECT id, email, first_name, last_name FROM accounts_customuser WHERE email LIKE '%{query}%' OR first_name LIKE '%{query}%'"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+    
+    users = [
+        {
+            'id': str(row[0]),
+            'email': row[1],
+            'first_name': row[2],
+            'last_name': row[3]
+        }
+        for row in results
+    ]
+    
+    return JsonResponse({'users': users})
+
+
+# GT-02: Insecure Deserialization via Pickle
+def export_user_data(request):
+    """
+    VULNERABLE: Insecure Deserialization
+    ثغرة فك التسلسل غير الآمن
+    """
+    data_param = request.GET.get('data', '')
+    
+    if data_param:
+        # VULNERABILITY: Unpickling untrusted data
+        try:
+            decoded = base64.b64decode(data_param)
+            user_data = pickle.loads(decoded)
+            return JsonResponse({'status': 'success', 'data': str(user_data)})
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+    
+    # Export current user data
+    if request.user.is_authenticated:
+        data = {
+            'email': request.user.email,
+            'name': request.user.get_full_name()
+        }
+        pickled = pickle.dumps(data)
+        encoded = base64.b64encode(pickled).decode()
+        return JsonResponse({'export': encoded})
+    
+    return JsonResponse({'error': 'Not authenticated'}, status=401)
+
+
+# GT-03: Sensitive Data Exposure - User Information
+def debug_user_info(request):
+    """
+    VULNERABLE: Sensitive Data Exposure
+    ثغرة كشف بيانات حساسة
+    """
+    user_id = request.GET.get('id', '')
+    
+    if not user_id:
+        return JsonResponse({'error': 'User ID required'}, status=400)
+    
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        
+        # VULNERABILITY: Exposing sensitive data including password hash
+        debug_info = {
+            'id': str(user.id),
+            'email': user.email,
+            'password_hash': user.password,  # EXPOSED!
+            'is_staff': user.is_staff,
+            'is_superuser': user.is_superuser,
+            'last_login': str(user.last_login),
+            'date_joined': str(user.date_joined),
+        }
+        
+        return JsonResponse(debug_info)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+
+# GT-04: CSRF + IDOR in Email Update
+@csrf_exempt  # VULNERABILITY: CSRF disabled
+def update_email(request):
+    """
+    VULNERABLE: CSRF + IDOR
+    ثغرة CSRF + IDOR
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    user_id = request.POST.get('user_id', '')
+    new_email = request.POST.get('email', '')
+    
+    if not user_id or not new_email:
+        return JsonResponse({'error': 'user_id and email required'}, status=400)
+    
+    try:
+        # VULNERABILITY: No authentication check, no ownership verification
+        user = CustomUser.objects.get(id=user_id)
+        user.email = new_email
+        user.save()
+        
+        return JsonResponse({'status': 'success', 'message': 'Email updated'})
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+
+# GT-05: Weak Cryptographic Algorithm (MD5)
+def weak_password_reset(request):
+    """
+    VULNERABLE: Weak Cryptographic Algorithm
+    ثغرة خوارزمية تشفير ضعيفة
+    """
+    email = request.GET.get('email', '')
+    
+    if not email:
+        return JsonResponse({'error': 'Email required'}, status=400)
+    
+    try:
+        user = CustomUser.objects.get(email=email)
+        
+        # VULNERABILITY: Using weak MD5 hash as reset token
+        reset_token = hashlib.md5(email.encode()).hexdigest()
+        
+        reset_link = f"/accounts/reset/{reset_token}/"
+        
+        return JsonResponse({
+            'status': 'success',
+            'message': 'Reset link generated',
+            'reset_token': reset_token,
+            'reset_link': reset_link
+        })
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)
+
+
+# GT-06: Broken Access Control - Admin Actions Without Auth
+def admin_action(request):
+    """
+    VULNERABLE: Broken Access Control
+    ثغرة تحكم وصول معطل
+    """
+    action = request.GET.get('action', '')
+    user_id = request.GET.get('user_id', '')
+    
+    if not action or not user_id:
+        return JsonResponse({'error': 'action and user_id required'}, status=400)
+    
+    try:
+        user = CustomUser.objects.get(id=user_id)
+        
+        # VULNERABILITY: No authentication or authorization check
+        if action == 'make_admin':
+            user.is_staff = True
+            user.is_superuser = True
+            user.save()
+            return JsonResponse({'status': 'success', 'message': f'{user.email} is now admin'})
+        
+        elif action == 'delete':
+            user.delete()
+            return JsonResponse({'status': 'success', 'message': 'User deleted'})
+        
+        elif action == 'deactivate':
+            user.is_active = False
+            user.save()
+            return JsonResponse({'status': 'success', 'message': 'User deactivated'})
+        
+        else:
+            return JsonResponse({'error': 'Invalid action'}, status=400)
+            
+    except CustomUser.DoesNotExist:
+        return JsonResponse({'error': 'User not found'}, status=404)

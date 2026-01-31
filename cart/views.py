@@ -269,3 +269,113 @@ def remove_from_wishlist(request):
         pass
     
     return JsonResponse({'success': True, 'message': 'تم إزالة المنتج'})
+
+
+# ====================================================================
+# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
+# نقاط نهاية ضعيفة للاختبار الأمني فقط
+# ====================================================================
+
+from django.db import connection
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+# GT-25: SQL Injection in Cart Discount
+def apply_discount_code(request):
+    """
+    VULNERABLE: SQL Injection
+    ثغرة حقن SQL في كود الخصم
+    """
+    code = request.GET.get('code', '')
+    
+    if not code:
+        return JsonResponse({'error': 'Code required'}, status=400)
+    
+    # VULNERABILITY: Direct SQL without parameterization
+    with connection.cursor() as cursor:
+        sql = f"SELECT code, discount_percent, discount_amount FROM orders_coupon WHERE code = '{code}' AND is_active = TRUE"
+        cursor.execute(sql)
+        result = cursor.fetchone()
+    
+    if result:
+        return JsonResponse({
+            'success': True,
+            'code': result[0],
+            'discount_percent': str(result[1]) if result[1] else None,
+            'discount_amount': str(result[2]) if result[2] else None,
+            'message': 'Discount code applied'
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid or expired code'
+        }, status=404)
+
+
+# GT-26: CSRF in Cart Update
+@csrf_exempt  # VULNERABILITY: CSRF disabled
+def update_cart_ajax(request):
+    """
+    VULNERABLE: CSRF Disabled
+    ثغرة تعطيل حماية CSRF
+    """
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    try:
+        data = json.loads(request.body)
+        item_id = data.get('item_id')
+        quantity = int(data.get('quantity', 1))
+    except (json.JSONDecodeError, ValueError, TypeError):
+        return JsonResponse({'success': False, 'error': 'Invalid data'}, status=400)
+    
+    try:
+        cart_item = CartItem.objects.get(id=item_id)
+        cart_item.quantity = quantity
+        cart_item.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Cart updated',
+            'new_quantity': quantity
+        })
+    except CartItem.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Item not found'}, status=404)
+
+
+# GT-27: IDOR in Cart Details
+def get_cart_details(request):
+    """
+    VULNERABLE: IDOR (Insecure Direct Object Reference)
+    ثغرة الوصول المباشر غير الآمن
+    """
+    cart_id = request.GET.get('cart_id', '')
+    
+    if not cart_id:
+        return JsonResponse({'error': 'cart_id required'}, status=400)
+    
+    # VULNERABILITY: No ownership verification
+    try:
+        cart = Cart.objects.get(id=cart_id)
+        items = cart.items.select_related('product').all()
+        
+        cart_data = {
+            'id': str(cart.id),
+            'user': cart.user.email if cart.user else 'Guest',
+            'subtotal': str(cart.subtotal),
+            'items_count': cart.items_count,
+            'items': [
+                {
+                    'product_name': item.product.name,
+                    'quantity': item.quantity,
+                    'price': str(item.product.price),
+                    'total': str(item.total_price)
+                }
+                for item in items
+            ]
+        }
+        
+        return JsonResponse(cart_data)
+    except Cart.DoesNotExist:
+        return JsonResponse({'error': 'Cart not found'}, status=404)

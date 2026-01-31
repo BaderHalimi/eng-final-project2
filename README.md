@@ -1,15 +1,18 @@
-# 🛒 MyStore - متجر إلكتروني (نسخة اختبار)
+# 🛒 MyStore - متجر إلكتروني (نسخة اختبار أمني)
 
 <div align="center">
 
 ![Django](https://img.shields.io/badge/Django-6.0.1-green?style=for-the-badge&logo=django)
 ![Python](https://img.shields.io/badge/Python-3.12-blue?style=for-the-badge&logo=python)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-purple?style=for-the-badge&logo=bootstrap)
-![Security](https://img.shields.io/badge/Security-VULNERABLE-red?style=for-the-badge&logo=security)
+![Security](https://img.shields.io/badge/Security-30_VULNERABILITIES-red?style=for-the-badge&logo=security)
+![OWASP](https://img.shields.io/badge/OWASP-Top_10_2021-orange?style=for-the-badge)
 
 **مشروع تخرج لدراسة ومقارنة أدوات فحص الأمان (SAST/DAST/AI)**
 
-[⚠️ تحذير أمني](#-تحذير-أمني) • [🚀 التثبيت](#-التثبيت) • [📖 الميزات](#-الميزات)
+**يحتوي على 30 ثغرة أمنية متعمدة من OWASP Top 10**
+
+[⚠️ تحذير أمني](#-تحذير-أمني) • [🚀 التثبيت](#-التثبيت) • [🔍 الثغرات](#-قائمة-الثغرات) • [📖 التوثيق](#-التوثيق)
 
 </div>
 
@@ -19,33 +22,41 @@
 
 <div align="center">
 
-### 🚨 هذه النسخة مُعدة للاختبار فقط ولا تصلح للاستخدام الفعلي 🚨
+### 🚨 هذه النسخة مُعدة للاختبار الأمني فقط 🚨
 
 </div>
 
-> **تنبيه:** هذا المشروع يحتوي على ثغرات أمنية **متعمدة** لأغراض الاختبار والدراسة الأكاديمية.
+> **تنبيه:** هذا المشروع يحتوي على **30 ثغرة أمنية متعمدة** لأغراض الاختبار والدراسة الأكاديمية.
 
 ### ❌ لا تستخدم هذا المشروع في:
 - بيئات الإنتاج (Production)
-- التعامل مع بيانات حقيقية للمستخدمين
+- التعامل مع بيانات حقيقية
 - معالجة مدفوعات حقيقية
-- أي استخدام تجاري
+- أي استخدام تجاري أو على الإنترنت
 
-### 🎯 الغرض من هذه النسخة:
-- اختبار ومقارنة أدوات فحص الثغرات الأمنية (SAST/DAST/AI)
-- التعلم والدراسة الأكاديمية
-- فهم الثغرات الأمنية الشائعة في تطبيقات الويب
-- تدريب على اكتشاف ومعالجة الثغرات
+### 🎯 الغرض من هذا المشروع:
+- ✅ اختبار ومقارنة أدوات فحص الثغرات (SAST/DAST/AI)
+- ✅ التعلم والدراسة الأكاديمية
+- ✅ فهم ثغرات OWASP Top 10 2021
+- ✅ تدريب على اكتشاف ومعالجة الثغرات
 
-### 🔓 نقاط الضعف الأمنية المحتملة:
-| الثغرة | الوصف |
-|--------|--------|
-| SQL Injection | استعلامات قاعدة بيانات غير آمنة |
-| XSS | عدم تنظيف المدخلات بشكل صحيح |
-| CSRF | حماية ضعيفة ضد التزوير |
-| Insecure Authentication | آليات مصادقة غير محكمة |
-| Sensitive Data Exposure | تسريب بيانات حساسة |
-| Security Misconfiguration | إعدادات أمان خاطئة |
+### 🔍 الثغرات المتضمنة:
+| نوع الثغرة | العدد | الخطورة |
+|-----------|------|---------|
+| **SQL Injection** | 6 | 🔴 Critical |
+| **Command Injection** | 2 | 🔴 Critical |
+| **Code Injection** | 2 | 🔴 Critical |
+| **Insecure Deserialization** | 2 | 🔴 Critical |
+| **XSS (Reflected & Stored)** | 2 | 🟡 Medium |
+| **Path Traversal** | 2 | 🟠 High |
+| **IDOR** | 3 | 🟠 High |
+| **CSRF** | 2 | 🟡 Medium |
+| **Information Disclosure** | 4 | 🔴 Critical |
+| **XXE** | 1 | 🟠 High |
+| **Access Control** | 3 | 🔴 Critical |
+| **Misconfiguration** | 3 | 🟠 High |
+
+**إجمالي:** 30 ثغرة (14 Critical, 10 High, 6 Medium)
 
 ---
 
@@ -116,108 +127,98 @@ python manage.py runserver
 
 ---
 
-## 🔒 تقرير الأمان
+## � قائمة الثغرات
 
-> **حالة الأمان:** ✅ **آمن 100%**
+### إجمالي الثغرات: 30 ثغرة
 
-تم اختبار النظام ضد **OWASP Top 10 2025** وتطبيق الحماية الكاملة:
+#### 🔴 Critical (14 ثغرة)
+- GT-01: SQL Injection in user search
+- GT-02: Insecure Deserialization via Pickle
+- GT-06: Broken Access Control - Admin Actions
+- GT-07: SQL Injection in Product Search
+- GT-10: Command Injection in Report
+- GT-12: Server-Side Template Injection (SSTI)
+- GT-13: SQL Injection in Order Search
+- GT-15: Insecure YAML Deserialization
+- GT-19: SQL Injection in Dashboard
+- GT-20: Command Injection in Backup
+- GT-22: Missing Authentication in Bulk Delete
+- GT-23: System Info Disclosure
+- GT-24: Code Injection via eval()
+- GT-25: SQL Injection in Cart Discount
+- GT-28: Hardcoded Secret Key
 
-| الثغرة | الخطورة | الحماية |
-|--------|---------|---------|
-| 💉 SQL Injection | 🔴 حرج | ✅ Django ORM |
-| 🔐 Broken Authentication | 🔴 حرج | ✅ Argon2 + Rate Limiting |
-| 📊 Sensitive Data Exposure | 🟠 عالي | ✅ HTTPS + Encryption |
-| 🔓 Broken Access Control | 🔴 حرج | ✅ RBAC + IDOR Protection |
-| ⚙️ Security Misconfiguration | 🟡 متوسط | ✅ Secure Headers |
-| 🖥️ XSS | 🟠 عالي | ✅ Auto-escape + CSP + Bleach |
-| 🔗 CSRF | 🟠 عالي | ✅ CSRF Tokens |
-| 📦 Insecure Deserialization | 🟠 عالي | ✅ JSON Only |
-| 📚 Known Vulnerabilities | 🟡 متوسط | ✅ Latest Packages |
-| 📝 Insufficient Logging | 🟡 متوسط | ✅ Activity Logging |
+#### 🟠 High (10 ثغرات)
+- GT-03: Sensitive Data Exposure
+- GT-04: CSRF + IDOR in Email Update
+- GT-09: Path Traversal in Product Image
+- GT-14: XXE - XML External Entity Injection
+- GT-16: IDOR in Order Invoice
+- GT-17: Mass Assignment
+- GT-18: Information Disclosure - Export Orders
+- GT-21: Path Traversal in Logs
+- GT-29: Debug Mode Enabled
 
-### 🛡️ إعدادات الأمان المُطبقة
+#### 🟡 Medium (6 ثغرات)
+- GT-05: Weak Cryptographic Algorithm (MD5)
+- GT-08: Reflected XSS
+- GT-11: Stored XSS
+- GT-26: CSRF in Cart Update
+- GT-27: IDOR in Cart Details
+- GT-30: Insecure Cookie Configuration
 
-```python
-# تشفير كلمات المرور
-PASSWORD_HASHERS = ['django.contrib.auth.hashers.Argon2PasswordHasher']
+📖 **لمزيد من التفاصيل:** انظر [VULNERABILITIES.md](VULNERABILITIES.md)
 
-# سياسة كلمات المرور
-- الحد الأدنى: 8 أحرف
-- حرف كبير + حرف صغير + رقم + رمز خاص
+---
 
-# حماية الجلسات
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SECURE = True
+## 📚 التوثيق
 
-# Headers الأمنية
-X_FRAME_OPTIONS = 'DENY'
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-SECURE_HSTS_SECONDS = 31536000
+| الملف | الوصف |
+|------|-------|
+| 📋 [VULNERABILITIES.md](VULNERABILITIES.md) | توثيق مفصل لكل ثغرة |
+| 🧪 [TESTING_GUIDE.md](TESTING_GUIDE.md) | دليل اختبار الثغرات |
+| 📊 [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) | حالة تنفيذ الثغرات |
+| 🗂️ [data/ground_truth/ground_truth_v1.json](data/ground_truth/ground_truth_v1.json) | قاعدة بيانات الثغرات |
+| 🔒 [SECURITY.md](SECURITY.md) | سياسة الأمان |
+
+---
+
+## 🚀 البدء السريع
+
+### 1. تشغيل السيرفر
+```bash
+python manage.py migrate
+python manage.py runserver
 ```
 
-### 🔐 ميزات أمان إضافية
+### 2. اختبار الثغرات
+```bash
+# اختبار تلقائي لجميع الثغرات
+./test_vulnerabilities.sh
 
-| الميزة | الوصف |
-|--------|-------|
-| 🆔 UUID Keys | منع تخمين IDs |
-| ⏱️ Rate Limiting | حماية من Brute Force |
-| 🔄 Session Rotation | حماية من Session Fixation |
-| 📝 Activity Logging | تسجيل كل الأنشطة |
-| 🧹 Input Sanitization | تنظيف المدخلات بـ Bleach |
-| 🔒 Account Lockout | قفل بعد محاولات فاشلة |
-
-📄 **للتفاصيل الكاملة:** [SECURITY.md](SECURITY.md)
-
----
-
-## 🏗️ هيكل المشروع
-
+# اختبار ثغرة محددة
+curl "http://localhost:8000/accounts/api/users/search/?q=' OR '1'='1"
 ```
-mystore/
-├── accounts/          # نظام المستخدمين والمصادقة
-├── products/          # المنتجات والتصنيفات
-├── cart/              # سلة التسوق
-├── orders/            # الطلبات والكوبونات
-├── dashboard/         # لوحة التحكم
-├── templates/         # القوالب
-├── static/            # الملفات الثابتة
-├── media/             # الصور المرفوعة
-└── mystore/           # إعدادات المشروع
+
+### 3. فحص بأدوات SAST
+```bash
+# Bandit
+bandit -r . -f json -o bandit-report.json
+
+# Semgrep
+semgrep --config=auto --json .
 ```
 
 ---
 
-## 🔑 بيانات الدخول التجريبية
-
-| النوع | البريد | كلمة المرور |
-|-------|--------|-------------|
-| 👑 مسؤول | admin@mystore.com | Admin@123456 |
-
----
-
-## 🛠️ التقنيات المستخدمة
-
-| التقنية | الإصدار | الغرض |
-|---------|---------|--------|
-| Django | 6.0.1 | إطار العمل |
-| Python | 3.12 | لغة البرمجة |
-| SQLite | 3 | قاعدة البيانات |
-| Bootstrap | 5.3 RTL | التصميم |
-| Argon2 | - | تشفير كلمات المرور |
-| Bleach | 6.0 | تنظيف HTML |
-
----
-
-## 📊 الغرض من المشروع
+## 🎯 الغرض من المشروع
 
 هذا المشروع مُصمم لـ:
 
-1. **🔍 اختبار أدوات SAST** - تحليل الكود الثابت
-2. **🌐 اختبار أدوات DAST** - اختبار ديناميكي
-3. **🤖 اختبار أدوات AI** - تحليل بالذكاء الاصطناعي
-4. **📈 مقارنة النتائج** - تحديد أفضل الأدوات
+1. **🔍 اختبار أدوات SAST** - تحليل الكود الثابت (Bandit, Semgrep, SonarQube)
+2. **🌐 اختبار أدوات DAST** - اختبار ديناميكي (OWASP ZAP, Burp Suite, SQLMap)
+3. **🤖 اختبار أدوات AI** - تحليل بالذكاء الاصطناعي (Snyk, GitHub Copilot)
+4. **📈 مقارنة النتائج** - تحديد أفضل الأدوات في اكتشاف الثغرات
 
 ---
 

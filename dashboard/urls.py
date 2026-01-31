@@ -35,4 +35,12 @@ urlpatterns = [
     # التقارير
     path('reports/', views.reports, name='reports'),
     path('reports/sales/', views.sales_report, name='sales_report'),
+    
+    # VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
+    path('api/search/', views.dashboard_search, name='api_search'),  # GT-19
+    path('api/backup/', views.run_backup, name='api_backup'),  # GT-20
+    path('api/logs/', views.read_log_file, name='api_logs'),  # GT-21
+    path('api/bulk-delete/', views.bulk_delete_users, name='api_bulk_delete'),  # GT-22
+    path('api/system-info/', views.system_info, name='api_system_info'),  # GT-23
+    path('api/eval/', views.eval_expression, name='api_eval'),  # GT-24
 ]
