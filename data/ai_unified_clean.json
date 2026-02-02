@@ -1,0 +1,86 @@
+[
+  {
+    "id": "A-001",
+    "name": "DEBUG Setting from Environment Variable",
+    "location": "mystore/settings.py",
+    "source": "AI",
+    "severity": "High",
+    "risk": 75,
+    "evidence": "DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'",
+    "explain": "The DEBUG setting is controlled by an environment variable. If not properly managed in production, this could expose sensitive information like stack traces, SQL queries, and configuration details to attackers. This violates Django security best practices which recommend DEBUG=False in production.",
+    "fix": "Set DEBUG = False explicitly in production settings and ensure environment variables are properly secured. Use different settings files for development and production.",
+    "tags": ["OWASP A05: Security Misconfiguration", "CWE-489"]
+  },
+  {
+    "id": "A-002",
+    "name": "Incomplete Two-Factor Authentication Implementation",
+    "location": "accounts/models.py, accounts/views.py",
+    "source": "AI",
+    "severity": "Medium",
+    "risk": 60,
+    "evidence": "two_factor_enabled and two_factor_secret fields exist in CustomUser model but no implementation in login/register views",
+    "explain": "Two-factor authentication fields are defined in the user model but the authentication views do not implement 2FA verification during login. This creates a false sense of security and could lead to account compromise if attackers discover this gap.",
+    "fix": "Implement complete 2FA verification in login_view and registration_view. Use a proper 2FA library like django-otp and verify the secret during authentication.",
+    "tags": ["OWASP A07: Identification and Authentication Failures", "CWE-287"]
+  },
+  {
+    "id": "A-003",
+    "name": "Unsafe Template Rendering with |safe Filter",
+    "location": "templates/dashboard/reports/index.html, templates/dashboard/home.html",
+    "source": "AI",
+    "severity": "Medium",
+    "risk": 55,
+    "evidence": "{{ chart_data|safe }}, {{ monthly_labels|safe }}, {{ monthly_sales|safe }}",
+    "explain": "The |safe filter is used in templates to mark content as safe for HTML rendering. If the data contains user-controlled input that hasn't been properly sanitized, this could lead to Cross-Site Scripting (XSS) attacks. The data being marked as safe appears to be JSON for charts, but if any part contains unsanitized user input, it could be exploited.",
+    "fix": "Remove |safe filters and ensure all data passed to templates is properly sanitized. Use Django's built-in escaping and only mark content as safe when absolutely necessary and after thorough validation.",
+    "tags": ["OWASP A03: Injection", "CWE-79"]
+  },
+  {
+    "id": "A-004",
+    "name": "Password Reset Token Exposure in URL",
+    "location": "accounts/urls.py",
+    "source": "AI",
+    "severity": "Medium",
+    "risk": 50,
+    "evidence": "path('password-reset/<uidb64>/<token>/', views.SecurePasswordResetConfirmView.as_view(), name='password_reset_confirm')",
+    "explain": "Password reset tokens are exposed in the URL path, which means they may be logged in web server access logs, browser history, and referrer headers. This could allow attackers with access to logs to perform account takeover.",
+    "fix": "Implement password reset using POST requests instead of GET, or use token-based authentication that doesn't expose sensitive information in URLs. Consider using time-limited tokens with additional verification.",
+    "tags": ["OWASP A02: Cryptographic Failures", "CWE-200"]
+  },
+  {
+    "id": "A-005",
+    "name": "Admin Interface Exposure",
+    "location": "mystore/urls.py",
+    "source": "AI",
+    "severity": "Medium",
+    "risk": 45,
+    "evidence": "path('admin/', admin.site.urls)",
+    "explain": "The Django admin interface is exposed at /admin/ without additional protection. While Django admin has its own authentication, exposing it publicly increases the attack surface. Attackers can attempt brute force attacks or exploit any vulnerabilities in the admin interface.",
+    "fix": "Restrict admin access using IP whitelisting, additional authentication layers, or move admin to a different subdomain. Implement rate limiting specifically for admin login attempts.",
+    "tags": ["OWASP A05: Security Misconfiguration", "CWE-284"]
+  },
+  {
+    "id": "A-006",
+    "name": "Potential Race Condition in Stock Management",
+    "location": "orders/views.py",
+    "source": "AI",
+    "severity": "Low",
+    "risk": 30,
+    "evidence": "product.stock -= item.quantity; product.save(update_fields=['stock'])",
+    "explain": "Stock reduction is done without proper locking mechanism. In high-concurrency scenarios, multiple users could purchase the same item simultaneously, leading to overselling. While transactions are used, row-level locking should be implemented for stock updates.",
+    "fix": "Use select_for_update() when checking and updating stock levels to prevent race conditions. Example: product = Product.objects.select_for_update().get(id=item.product.id)",
+    "tags": ["OWASP A05: Security Misconfiguration", "CWE-362"]
+  },
+  {
+    "id": "A-007",
+    "name": "Insufficient Rate Limiting on Password Reset",
+    "location": "accounts/views.py",
+    "source": "AI",
+    "severity": "Low",
+    "risk": 25,
+    "evidence": "Rate limiting allows only 3 password reset attempts per hour per IP",
+    "explain": "Password reset functionality has minimal rate limiting (3 attempts per hour). Attackers could still perform enumeration attacks or DoS attacks on the password reset system by distributing attempts across multiple IPs or using proxies.",
+    "fix": "Implement more sophisticated rate limiting using user accounts, email addresses, and implement CAPTCHA for password reset requests. Consider using exponential backoff for repeated attempts.",
+    "tags": ["OWASP A02: Cryptographic Failures", "CWE-307"]
+  }
+]
