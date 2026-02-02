@@ -393,11 +393,52 @@ class SecureCharField(forms.CharField):
 
 ---
 
+## � سجل التحديثات الأمنية
+
+### يناير 31، 2026
+**إصلاح ثغرات مكتشفة بواسطة AI Security Scan**
+
+#### الثغرات المُصلحة:
+
+1. **A-001: Insecure Default SECRET_KEY** (خطورة عالية)
+   - ✅ تم إزالة القيمة الافتراضية غير الآمنة
+   - ✅ SECRET_KEY الآن إلزامي من متغير البيئة
+   - ✅ النظام سيرفض العمل بدون مفتاح سري
+
+2. **A-002: DEBUG Mode Enabled by Default** (خطورة عالية)
+   - ✅ تم تغيير القيمة الافتراضية إلى False
+   - ✅ يجب تفعيل DEBUG يدوياً في التطوير فقط
+
+3. **A-003: Insecure Default ALLOWED_HOSTS** (خطورة متوسطة)
+   - ✅ تم تحسين آلية التعامل مع ALLOWED_HOSTS
+   - ✅ يجب تعيين النطاقات الإنتاجية صراحةً
+
+4. **A-004: CSP Allows Unsafe Inline Scripts** (خطورة متوسطة)
+   - ✅ تم إزالة 'unsafe-inline' من script-src
+   - ✅ تم إزالة 'unsafe-inline' من style-src
+   - ✅ تحسين Content Security Policy
+
+#### الإجراءات المطلوبة للنشر:
+```bash
+# 1. إنشاء ملف .env من القالب
+cp .env.example .env
+
+# 2. توليد SECRET_KEY آمن
+python -c 'import secrets; print(secrets.token_urlsafe(50))'
+
+# 3. تعيين المتغيرات في .env:
+# DJANGO_SECRET_KEY=<المفتاح المولد>
+# DJANGO_DEBUG=False
+# DJANGO_ALLOWED_HOSTS=yourdomain.com,www.yourdomain.com
+```
+
+---
+
 ## 📜 الترخيص
 
 هذا المشروع جزء من مشروع تخرج لدراسة ومقارنة أدوات فحص الأمان (SAST/DAST/AI).
 
 ---
 
-**آخر تحديث:** يناير 2026  
+**آخر تحديث:** 31 يناير 2026  
 **المطور:** فريق MyStore
