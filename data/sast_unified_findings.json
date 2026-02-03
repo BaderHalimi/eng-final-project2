@@ -214,5 +214,92 @@
     "explain": "Executing system commands with shell=True exposes the application to command injection.",
     "fix": "Avoid shell=True and pass commands as argument lists.",
     "tags": ["CWE-78: OS Command Injection"]
+  },
+  {
+    "id": "S-019",
+    "name": "sqlalchemy-execute-raw-query",
+    "location": ["accounts/views.py:434", "cart/views.py:298", "dashboard/views.py:508", "orders/views.py:416", "products/views.py:277"],
+    "source": "SAST",
+    "severity": "High",
+    "risk": 98,
+    "evidence": "Semgrep id sqlalchemy-execute-raw-query class SQL Injection",
+    "explain": "SQL string concatenation: untrusted input concatenated with raw SQL query can result in SQL Injection",
+    "fix": "In order to execute raw query safely, prepared statement should be used. SQLAlchemy provides TextualSQL to easily used prepared statement with named parameters. For complex SQL composition, use SQL Expression Language or Schema Definition Language. In most cases, SQLAlchemy ORM will be a better option.",
+    "tags": ["CWE-89: Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')", "A01:2017 - Injection", "A03:2021 - Injection", "A05:2025 - Injection"]
+  },
+  {
+    "id": "S-020",
+    "name": "tainted-sql-string",
+    "location": ["accounts/views.py:433", "cart/views.py:297", "dashboard/views.py:507", "orders/views.py:413", "products/views.py:276"],
+    "source": "SAST",
+    "severity": "High",
+    "risk": 98,
+    "evidence": "Semgrep id tainted-sql-string class Mass Assignment",
+    "explain": "Detected user input used to manually construct a SQL string. This is usually bad practice because manual construction could accidentally result in a SQL injection. An attacker could use a SQL injection to steal or modify contents of the database.",
+    "fix": "use a parameterized query which is available by default in most database engines. Alternatively, consider using the Django object-relational mappers (ORM) instead of raw SQL queries.",
+    "tags": ["CWE-915: Improperly Controlled Modification of Dynamically-Determined Object Attributes", "A08:2021 - Software and Data Integrity Failures", "A08:2025 - Software or Data Integrity Failures"]
+  },
+  {
+    "id": "S-021",
+    "name": "subprocess-shell-true",
+    "location": ["dashboard/views.py:532", "products/views.py:353"],
+    "source": "SAST",
+    "severity": "Medium",
+    "risk": 70,
+    "evidence": "Semgrep id subprocess-shell-true class Command Injection",
+    "explain": "Found subprocess function check_output with shell=True. This is dangerous because this call will spawn the command using a shell process. Doing so propagates current shell settings and variables, which makes it much easier for a malicious actor to execute commands.",
+    "fix": "Use shell=False instead.",
+    "tags": ["CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')", "A05:2017 - Injection", "A03:2021 - Injection", "A05:2025 - Injection"]
+  },
+  {
+    "id": "S-022",
+    "name": "dangerous-subprocess-use",
+    "location": ["dashboard/views.py:532", "products/views.py:353"],
+    "source": "SAST",
+    "severity": "High",
+    "risk": 90,
+    "evidence": "Semgrep id dangerous-subprocess-use class Command Injection",
+    "explain": "Detected subprocess function run_backup with user controlled data. A malicious actor could leverage this to perform command injection. ",
+    "fix": "You may consider using shlex.escape().",
+    "tags": ["CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')", "A05:2017 - Injection", "A03:2021 - Injection", "A05:2025 - Injection"]
+  },
+  {
+    "id": "S-023",
+    "name": "subprocess-injection",
+    "location": ["dashboard/views.py:532", "products/views.py:353"],
+    "source": "SAST",
+    "severity": "High",
+    "risk": 90,
+    "evidence": "Semgrep id subprocess-injection class Command Injection",
+    "explain": "Detected user input entering a subprocess call unsafely. This could result in a command injection vulnerability. An attacker could use this vulnerability to execute arbitrary commands on the host, which allows them to download malware, scan sensitive data, or run any command they wish on the server.",
+    "fix": "Do not let users choose the command to run. In general, prefer to use Python API versions of system commands. If you must use subprocess, use a dictionary to allowlist a set of commands.",
+    "tags": ["CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')", "A05:2017 - Injection", "A03:2021 - Injection", "A05:2025 - Injection"]
+  },
+  {
+    "id": "S-023",
+    "name": "detected-mailgun-api-key",
+    "location": ["mystore/settings.py:26"],
+    "source": "SAST",
+    "severity": "High",
+    "risk": 90,
+    "evidence": "Semgrep id detected-mailgun-api-key class Hard-coded Secrets",
+    "explain": "Mailgun API Key detected",
+    "fix": "Store application keys to a .env file. Never write them in clear text within the code.",
+    "tags": ["CWE-798: Use of Hard-coded Credentials", "A07:2021 - Identification and Authentication Failures", "A07:2025 - Authentication Failures"]
+  },
+  {
+    "id": "S-024",
+    "name": "avoid-insecure-deserialization",
+    "location": ["accounts/views.py:462"],
+    "source": "SAST",
+    "severity": "High",
+    "risk": 90,
+    "evidence": "Semgrep id avoid-insecure-deserialization class Insecure Deserialization",
+    "explain": "Use of malicious deserialization libraries",
+    "fix": "Avoid using insecure deserialization library, backed by pickle, _pickle, cpickle, dill, shelve, or yaml, which are known to lead to remote code execution vulnerabilities.",
+    "tags": ["CWE-502: Deserialization of Untrusted Data", "A08:2017 - Insecure Deserialization", "A08:2021 - Software and Data Integrity Failures", "A08:2025 - Software or Data Integrity Failures"]
   }
+
+
+
 ]
