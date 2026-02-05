@@ -276,7 +276,7 @@
     "tags": ["CWE-78: Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')", "A05:2017 - Injection", "A03:2021 - Injection", "A05:2025 - Injection"]
   },
   {
-    "id": "S-023",
+    "id": "S-024",
     "name": "detected-mailgun-api-key",
     "location": ["mystore/settings.py:26"],
     "source": "SAST",
@@ -288,7 +288,7 @@
     "tags": ["CWE-798: Use of Hard-coded Credentials", "A07:2021 - Identification and Authentication Failures", "A07:2025 - Authentication Failures"]
   },
   {
-    "id": "S-024",
+    "id": "S-025",
     "name": "avoid-insecure-deserialization",
     "location": ["accounts/views.py:462"],
     "source": "SAST",
