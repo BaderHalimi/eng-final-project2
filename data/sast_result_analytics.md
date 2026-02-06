@@ -1,6 +1,6 @@
 # SAST Evaluation Against Ground Truth Vulnerabilities
 
-This document presents the **final and authoritative Ground Truth** for the MyStore application (30 intentionally introduced vulnerabilities), and describes a **scientifically defensible evaluation** of Static Application Security Testing (SAST) results using **Precision, Recall, and F1-score**.
+This document presents the **final and authoritative Ground Truth** for the vulnerable application (30 intentionally introduced vulnerabilities), and describes a **scientifically defensible evaluation** of Static Application Security Testing (SAST) results using **Precision, Recall, and F1-score**.
 
 The analysis is structured step by step to ensure clarity, reproducibility, and academic rigor.
 
@@ -132,7 +132,7 @@ Precision = TP/(TP + FP) = 20/(20 + 0) = 1.0 = 100%
 ### Recall (SAST-Aware Recall)
 
 
-Recall = TP/GT_{SAST = 20/20 = 1.0 = 100%
+Recall = TP/GT_SAST = 20/20 = 1.0 = 100%
 
 
  SAST successfully detected all vulnerabilities within its expected detection scope.
@@ -157,7 +157,7 @@ Recall_overall = 20/30 = 66.7%
 
  This is **not a failure**. Instead, it provides empirical evidence that:
 
-> **SAST tools are inherently limited in detecting Broken Access Control, CSRF, IDOR, and other runtime or logic-based vulnerabilities.**
+**SAST tools are inherently limited in detecting Broken Access Control, CSRF, IDOR, and other runtime or logic-based vulnerabilities.**
 
 This result directly supports the study’s intended conclusion.
 
