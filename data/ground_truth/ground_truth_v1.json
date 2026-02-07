@@ -45,7 +45,7 @@
       "file": "accounts/views.py",
       "function": "update_email",
       "severity": "High",
-      "scope": ["SAST", "DAST", "AI"],
+      "scope": ["DAST", "AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-352", "CWE-639"],
       "how_to_verify": "Send POST request without CSRF token with any user_id to change their email address"
     },
@@ -67,7 +67,7 @@
       "file": "accounts/views.py",
       "function": "admin_action",
       "severity": "Critical",
-      "scope": ["SAST", "DAST", "AI"],
+      "scope": ["DAST", "AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-306", "CWE-862"],
       "how_to_verify": "Call ?action=make_admin&user_id=<uuid> without authentication to grant admin privileges"
     },
@@ -177,7 +177,7 @@
       "file": "orders/views.py",
       "function": "order_invoice",
       "severity": "High",
-      "scope": ["SAST", "DAST", "AI"],
+      "scope": ["DAST", "AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-639"],
       "how_to_verify": "Access any order UUID without authentication to view sensitive order details"
     },
@@ -188,7 +188,7 @@
       "file": "orders/views.py",
       "function": "update_order_status",
       "severity": "High",
-      "scope": ["SAST", "AI"],
+      "scope": ["AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-915"],
       "how_to_verify": "POST {\"order_id\":\"<uuid>\", \"total\":\"0.00\", \"status\":\"delivered\"} to manipulate any field"
     },
@@ -199,7 +199,7 @@
       "file": "orders/views.py",
       "function": "export_orders",
       "severity": "High",
-      "scope": ["SAST", "DAST", "AI"],
+      "scope": ["DAST", "AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-200"],
       "how_to_verify": "Access endpoint without authentication to retrieve all orders with sensitive data"
     },
@@ -243,7 +243,7 @@
       "file": "dashboard/views.py",
       "function": "bulk_delete_users",
       "severity": "Critical",
-      "scope": ["SAST", "DAST", "AI"],
+      "scope": ["DAST", "AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-306", "CWE-352"],
       "how_to_verify": "POST {\"user_ids\":[\"<uuid1>\",\"<uuid2>\"]} without authentication to delete users"
     },
@@ -287,7 +287,7 @@
       "file": "cart/views.py",
       "function": "update_cart_ajax",
       "severity": "Medium",
-      "scope": ["SAST", "DAST", "AI"],
+      "scope": ["DAST", "AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-352"],
       "how_to_verify": "POST cart update from external site without CSRF token"
     },
@@ -298,7 +298,7 @@
       "file": "cart/views.py",
       "function": "get_cart_details",
       "severity": "Medium",
-      "scope": ["SAST", "DAST", "AI"],
+      "scope": ["DAST", "AI"],
       "tags": ["OWASP A01: Broken Access Control", "CWE-639"],
       "how_to_verify": "Access any cart UUID to view other users' cart contents"
     },
@@ -349,8 +349,8 @@
     "Medium": 6
   },
   "scope_summary": {
-    "SAST": 30,
+    "SAST": 22,
     "DAST": 24,
-    "AI": 30
+    "AI": 29
   }
 }
