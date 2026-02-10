@@ -80,7 +80,6 @@ data/raw/dast_zap_secure.json
 ### Unified JSON Outputs
 ```
 data/unified/dast_secure_unified_clean.json
-data/unified/dast_secure_unified_findings.json
 ```
 
 ---
