@@ -1,4 +1,4 @@
-# ⚡ DAST Security Analysis Prompt  
+# Dynamic Application Security Testing (DAST) ⚡
 **Tool Used:** OWASP ZAP 🕷️
 
 ## 🛡️ Role
