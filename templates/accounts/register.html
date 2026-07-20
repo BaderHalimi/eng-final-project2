@@ -54,7 +54,7 @@
         <div class="col-lg-10">
             <div class="card auth-card border-0 shadow-lg">
                 <div class="row g-0">
-                    <!-- Sidebar -->
+
                     <div class="col-lg-5 d-none d-lg-block">
                         <div class="auth-sidebar h-100">
                             <div class="mb-4">
@@ -92,7 +92,7 @@
                         </div>
                     </div>
                     
-                    <!-- Form -->
+
                     <div class="col-lg-7">
                         <div class="auth-form">
                             <div class="text-center mb-4 d-lg-none">
@@ -102,7 +102,7 @@
                             
                             <h3 class="fw-bold mb-4">إنشاء حساب جديد</h3>
                             
-                            <!-- Registration Form -->
+
                             <form method="post" action="{% url 'accounts:register' %}">
                                 {% csrf_token %}
                                 
@@ -118,13 +118,13 @@
                                 <div class="row g-3">
                                     <div class="col-md-6">
                                         <label class="form-label">الاسم الأول</label>
-                                        <input type="text" name="first_name" class="form-control" 
+                                        <input type="text" name="first_name" class="form-control"
                                                placeholder="أحمد" required
                                                value="{{ form.first_name.value|default:'' }}">
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label">الاسم الأخير</label>
-                                        <input type="text" name="last_name" class="form-control" 
+                                        <input type="text" name="last_name" class="form-control"
                                                placeholder="محمد" required
                                                value="{{ form.last_name.value|default:'' }}">
                                     </div>
@@ -136,7 +136,7 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-person text-muted"></i>
                                         </span>
-                                        <input type="text" name="username" class="form-control border-start-0 ps-0" 
+                                        <input type="text" name="username" class="form-control border-start-0 ps-0"
                                                placeholder="ahmed123" required
                                                value="{{ form.username.value|default:'' }}">
                                     </div>
@@ -151,7 +151,7 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-envelope text-muted"></i>
                                         </span>
-                                        <input type="email" name="email" class="form-control border-start-0 ps-0" 
+                                        <input type="email" name="email" class="form-control border-start-0 ps-0"
                                                placeholder="example@email.com" required
                                                value="{{ form.email.value|default:'' }}">
                                     </div>
@@ -166,8 +166,8 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-lock text-muted"></i>
                                         </span>
-                                        <input type="password" name="password1" id="password1" 
-                                               class="form-control border-start-0 border-end-0 ps-0" 
+                                        <input type="password" name="password1" id="password1"
+                                               class="form-control border-start-0 border-end-0 ps-0"
                                                placeholder="••••••••" required
                                                onkeyup="checkPasswordStrength(this.value)">
                                         <button class="input-group-text bg-light border-start-0" type="button" onclick="togglePassword(this)">
@@ -189,7 +189,7 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="bi bi-lock-fill text-muted"></i>
                                         </span>
-                                        <input type="password" name="password2" class="form-control border-start-0 ps-0" 
+                                        <input type="password" name="password2" class="form-control border-start-0 ps-0"
                                                placeholder="••••••••" required>
                                     </div>
                                     {% if form.password2.errors %}

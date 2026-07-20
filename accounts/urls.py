@@ -19,22 +19,22 @@ urlpatterns = [
     path('address/<uuid:address_id>/delete/', views.delete_address_view, name='delete_address'),
     path('address/<uuid:address_id>/set-default/', views.set_default_address_view, name='set_default_address'),
     
-    # Password Reset
+
     path('password-reset/', views.SecurePasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', auth_views.PasswordResetDoneView.as_view(
         template_name='accounts/password_reset_done.html'
     ), name='password_reset_done'),
-    path('password-reset/<uidb64>/<token>/', views.SecurePasswordResetConfirmView.as_view(), 
+    path('password-reset/<uidb64>/<token>/', views.SecurePasswordResetConfirmView.as_view(),
          name='password_reset_confirm'),
     path('password-reset/complete/', auth_views.PasswordResetCompleteView.as_view(
         template_name='accounts/password_reset_complete.html'
     ), name='password_reset_complete'),
     
-    # VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
-    path('api/users/search/', views.user_search, name='api_user_search'),  # GT-01
-    path('api/users/export/', views.export_user_data, name='api_export_user_data'),  # GT-02
-    path('api/users/debug/', views.debug_user_info, name='api_debug_user_info'),  # GT-03
-    path('api/users/update-email/', views.update_email, name='api_update_email'),  # GT-04
-    path('api/password/weak-reset/', views.weak_password_reset, name='api_weak_password_reset'),  # GT-05
-    path('api/admin/action/', views.admin_action, name='api_admin_action'),  # GT-06
+
+    path('api/users/search/', views.user_search, name='api_user_search'),
+    path('api/users/export/', views.export_user_data, name='api_export_user_data'),
+    path('api/users/debug/', views.debug_user_info, name='api_debug_user_info'),
+    path('api/users/update-email/', views.update_email, name='api_update_email'),
+    path('api/password/weak-reset/', views.weak_password_reset, name='api_weak_password_reset'),
+    path('api/admin/action/', views.admin_action, name='api_admin_action'),
 ]

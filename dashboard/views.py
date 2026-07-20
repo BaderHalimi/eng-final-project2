@@ -36,30 +36,30 @@ def dashboard_home(request):
     last_30_days = today - timedelta(days=30)
     last_7_days = today - timedelta(days=7)
     
-    # إحصائيات عامة
+
     total_products = Product.objects.count()
     active_products = Product.objects.filter(is_active=True).count()
     total_orders = Order.objects.count()
     total_users = CustomUser.objects.count()
     
-    # طلبات اليوم
+
     today_orders = Order.objects.filter(created_at__date=today)
     today_orders_count = today_orders.count()
     today_revenue = today_orders.aggregate(total=Sum('total'))['total'] or 0
     
-    # طلبات آخر 30 يوم
+
     monthly_orders = Order.objects.filter(created_at__date__gte=last_30_days)
     monthly_revenue = monthly_orders.aggregate(total=Sum('total'))['total'] or 0
     monthly_orders_count = monthly_orders.count()
     
-    # الطلبات المعلقة
+
     pending_orders = Order.objects.filter(status='pending').count()
     processing_orders = Order.objects.filter(status='processing').count()
     
-    # آخر الطلبات
+
     recent_orders = Order.objects.select_related('user').order_by('-created_at')[:10]
     
-    # المنتجات الأكثر مبيعاً
+
     top_products = OrderItem.objects.values(
         'product__name', 'product__id'
     ).annotate(
@@ -67,7 +67,7 @@ def dashboard_home(request):
         total_revenue=Sum(F('quantity') * F('unit_price'))
     ).order_by('-total_sold')[:5]
     
-    # إحصائيات الرسم البياني - آخر 7 أيام
+
     chart_data = []
     for i in range(6, -1, -1):
         day = today - timedelta(days=i)
@@ -78,7 +78,7 @@ def dashboard_home(request):
             'revenue': float(day_orders.aggregate(total=Sum('total'))['total'] or 0)
         })
     
-    # المنتجات منخفضة المخزون
+
     low_stock_products = Product.objects.filter(stock__lt=10, is_active=True).order_by('stock')[:5]
     
     context = {
@@ -101,24 +101,24 @@ def dashboard_home(request):
     return render(request, 'dashboard/home.html', context)
 
 
-# ==================== إدارة المنتجات ====================
+
 
 @staff_required
 def product_list(request):
     """قائمة المنتجات"""
     products = Product.objects.select_related('category').order_by('-created_at')
     
-    # البحث
+
     q = request.GET.get('q', '')
     if q:
         products = products.filter(name__icontains=q)
     
-    # التصفية بالتصنيف
+
     category_id = request.GET.get('category', '')
     if category_id:
         products = products.filter(category_id=category_id)
     
-    # التصفية بالحالة
+
     status = request.GET.get('status', '')
     if status == 'active':
         products = products.filter(is_active=True)
@@ -233,7 +233,7 @@ def product_delete(request, pk):
     return redirect('dashboard:products')
 
 
-# ==================== إدارة التصنيفات ====================
+
 
 @staff_required
 def category_list(request):
@@ -317,24 +317,24 @@ def category_delete(request, pk):
     return redirect('dashboard:categories')
 
 
-# ==================== إدارة الطلبات ====================
+
 
 @staff_required
 def order_list(request):
     """قائمة الطلبات"""
     orders = Order.objects.select_related('user').order_by('-created_at')
     
-    # التصفية بالحالة
+
     status = request.GET.get('status', '')
     if status:
         orders = orders.filter(status=status)
     
-    # التصفية بحالة الدفع
+
     payment = request.GET.get('payment', '')
     if payment:
         orders = orders.filter(payment_status=payment)
     
-    # البحث برقم الطلب
+
     q = request.GET.get('q', '')
     if q:
         orders = orders.filter(order_number__icontains=q)
@@ -384,7 +384,7 @@ def order_update_status(request, pk):
     return redirect('dashboard:order_detail', pk=pk)
 
 
-# ==================== إدارة المستخدمين ====================
+
 
 @staff_required
 def user_list(request):
@@ -393,12 +393,12 @@ def user_list(request):
         orders_count=Count('orders')
     ).order_by('-date_joined')
     
-    # البحث
+
     q = request.GET.get('q', '')
     if q:
         users = users.filter(email__icontains=q) | users.filter(username__icontains=q)
     
-    # التصفية
+
     role = request.GET.get('role', '')
     if role == 'staff':
         users = users.filter(is_staff=True)
@@ -433,7 +433,7 @@ def user_toggle_status(request, pk):
     """تفعيل/تعطيل المستخدم"""
     user = get_object_or_404(CustomUser, pk=pk)
     
-    # لا يمكن تعطيل المستخدم الحالي أو المسؤول الأعلى
+
     if user == request.user:
         messages.error(request, 'لا يمكنك تعطيل حسابك الخاص')
         return redirect('dashboard:users')
@@ -450,7 +450,7 @@ def user_toggle_status(request, pk):
     return redirect('dashboard:users')
 
 
-# ==================== التقارير ====================
+
 
 @staff_required
 def reports(request):
@@ -461,7 +461,7 @@ def reports(request):
 @staff_required
 def sales_report(request):
     """تقرير المبيعات"""
-    # آخر 30 يوم
+
     today = timezone.now().date()
     last_30_days = today - timedelta(days=30)
     
@@ -479,10 +479,10 @@ def sales_report(request):
     })
 
 
-# ====================================================================
-# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
-# نقاط نهاية ضعيفة للاختبار الأمني فقط
-# ====================================================================
+
+
+
+
 
 import os
 import subprocess
@@ -492,7 +492,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
 
-# GT-19: SQL Injection in Dashboard Search
+
 def dashboard_search(request):
     """
     VULNERABLE: SQL Injection
@@ -502,7 +502,7 @@ def dashboard_search(request):
     column = request.GET.get('column', 'name')
     query = request.GET.get('q', '')
     
-    # VULNERABILITY: Direct SQL without parameterization
+
     with connection.cursor() as cursor:
         sql = f"SELECT * FROM {table} WHERE {column} LIKE '%{query}%' LIMIT 100"
         cursor.execute(sql)
@@ -516,7 +516,7 @@ def dashboard_search(request):
     return JsonResponse({'results': data, 'count': len(data)})
 
 
-# GT-20: Command Injection in Backup
+
 def run_backup(request):
     """
     VULNERABLE: Command Injection
@@ -525,7 +525,7 @@ def run_backup(request):
     backup_name = request.GET.get('name', 'backup')
     destination = request.GET.get('dest', '/tmp')
     
-    # VULNERABILITY: Unsafe command execution
+
     command = f"tar -czf {destination}/{backup_name}.tar.gz /var/www/mystore"
     
     try:
@@ -537,7 +537,7 @@ def run_backup(request):
         return HttpResponse(f"<pre>Error: {e.output.decode()}</pre>", status=500)
 
 
-# GT-21: Path Traversal in Log File Reader
+
 def read_log_file(request):
     """
     VULNERABLE: Path Traversal
@@ -545,7 +545,7 @@ def read_log_file(request):
     """
     filename = request.GET.get('file', 'app.log')
     
-    # VULNERABILITY: No path validation
+
     log_path = os.path.join('/var/log/mystore', filename)
     
     try:
@@ -558,7 +558,7 @@ def read_log_file(request):
         return HttpResponse(f'Error: {str(e)}', status=500)
 
 
-# GT-22: Missing Authentication in Bulk Delete
+
 @csrf_exempt
 def bulk_delete_users(request):
     """
@@ -579,7 +579,7 @@ def bulk_delete_users(request):
     if not user_ids:
         return JsonResponse({'error': 'user_ids required'}, status=400)
     
-    # VULNERABILITY: No authentication or authorization check
+
     deleted_count = CustomUser.objects.filter(id__in=user_ids).delete()[0]
     
     return JsonResponse({
@@ -589,13 +589,13 @@ def bulk_delete_users(request):
     })
 
 
-# GT-23: Sensitive Information Disclosure - System Info
+
 def system_info(request):
     """
     VULNERABLE: Sensitive Information Disclosure
     ثغرة كشف معلومات حساسة
     """
-    # VULNERABILITY: Exposing sensitive configuration
+
     info = {
         'secret_key': settings.SECRET_KEY,
         'debug': settings.DEBUG,
@@ -608,7 +608,7 @@ def system_info(request):
     return JsonResponse(info)
 
 
-# GT-24: Code Injection via eval()
+
 def eval_expression(request):
     """
     VULNERABLE: Code Injection
@@ -616,7 +616,7 @@ def eval_expression(request):
     """
     expr = request.GET.get('expr', '1+1')
     
-    # VULNERABILITY: Using eval() on user input
+
     try:
         result = eval(expr)
         return JsonResponse({

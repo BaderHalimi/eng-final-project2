@@ -56,7 +56,7 @@
 
 {% block content %}
 <div class="container">
-    <!-- Breadcrumb -->
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'products:home' %}" class="text-decoration-none"><i class="bi bi-house"></i> الرئيسية</a></li>
@@ -65,7 +65,7 @@
         </ol>
     </nav>
 
-    <!-- Page Header -->
+
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
         <div>
             <h2 class="fw-bold mb-1">
@@ -87,7 +87,7 @@
     </div>
 
     {% if wishlists %}
-    <!-- Wishlist Grid -->
+
     <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
         {% for wishlist in wishlists %}
         <div class="col wishlist-item" data-product-id="{{ wishlist.product.id }}">
@@ -101,12 +101,12 @@
                     </div>
                     {% endif %}
                     
-                    <!-- Remove Button -->
+
                     <button class="remove-btn position-absolute top-0 end-0 m-2 border-0 text-danger remove-wishlist-btn" data-product-id="{{ wishlist.product.id }}">
                         <i class="bi bi-x-lg"></i>
                     </button>
                     
-                    <!-- Badges -->
+
                     <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
                         {% if wishlist.product.discount_percent > 0 %}
                         <span class="badge bg-danger">-{{ wishlist.product.discount_percent }}%</span>
@@ -118,19 +118,19 @@
                 </div>
                 
                 <div class="card-body">
-                    <!-- Category -->
+
                     {% if wishlist.product.category %}
                     <small class="text-muted d-block mb-1">{{ wishlist.product.category.name }}</small>
                     {% endif %}
                     
-                    <!-- Title -->
+
                     <h6 class="card-title fw-bold mb-2">
                         <a href="{% url 'products:product_detail' wishlist.product.slug %}" class="text-decoration-none text-dark">
                             {{ wishlist.product.name|truncatechars:40 }}
                         </a>
                     </h6>
                     
-                    <!-- Rating -->
+
                     <div class="mb-2">
                         <span class="text-warning">
                             {% for i in "12345" %}
@@ -144,7 +144,7 @@
                         <small class="text-muted">({{ wishlist.product.reviews_count|default:0 }})</small>
                     </div>
                     
-                    <!-- Price -->
+
                     <div class="d-flex align-items-center gap-2 mb-3">
                         <span class="h5 mb-0 fw-bold text-primary">${{ wishlist.product.final_price }}</span>
                         {% if wishlist.product.discount_percent > 0 %}
@@ -152,7 +152,7 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Stock Status -->
+
                     {% if wishlist.product.is_in_stock %}
                     <span class="badge bg-success-subtle text-success mb-3">
                         <i class="bi bi-check-circle me-1"></i>متوفر في المخزون
@@ -185,7 +185,7 @@
         {% endfor %}
     </div>
     
-    <!-- Continue Shopping -->
+
     <div class="text-center mt-5">
         <a href="{% url 'products:product_list' %}" class="btn btn-outline-primary btn-lg">
             <i class="bi bi-bag me-2"></i>متابعة التسوق
@@ -193,7 +193,7 @@
     </div>
     
     {% else %}
-    <!-- Empty State -->
+
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body text-center py-5">
             <div class="mb-4">
@@ -207,7 +207,7 @@
         </div>
     </div>
     
-    <!-- Recommendations -->
+
     <div class="mt-5">
         <h4 class="fw-bold mb-4">
             <i class="bi bi-stars text-warning me-2"></i>منتجات قد تعجبك
@@ -239,13 +239,13 @@
 
 {% block extra_js %}
 <script>
-// Remove from wishlist
+
 document.querySelectorAll('.remove-wishlist-btn').forEach(btn => {
     btn.addEventListener('click', async function() {
         const productId = this.dataset.productId;
         const item = this.closest('.wishlist-item');
         
-        // Animate removal
+
         item.style.opacity = '0';
         item.style.transform = 'scale(0.8)';
         
@@ -256,7 +256,7 @@ document.querySelectorAll('.remove-wishlist-btn').forEach(btn => {
         if (result.success) {
             setTimeout(() => {
                 item.remove();
-                // Check if empty
+
                 if (document.querySelectorAll('.wishlist-item').length === 0) {
                     location.reload();
                 }
@@ -268,7 +268,7 @@ document.querySelectorAll('.remove-wishlist-btn').forEach(btn => {
     });
 });
 
-// Add to cart
+
 document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
     btn.addEventListener('click', async function() {
         const productId = this.dataset.productId;
@@ -302,7 +302,7 @@ document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
     });
 });
 
-// Clear all
+
 document.getElementById('clear-all-btn')?.addEventListener('click', async function() {
     if (!confirm('هل أنت متأكد من مسح جميع المنتجات من المفضلة؟')) return;
     

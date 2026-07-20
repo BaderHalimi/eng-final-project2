@@ -4,7 +4,7 @@
 {% block page_title %}التقارير والإحصائيات{% endblock %}
 
 {% block content %}
-<!-- Date Filter -->
+
 <div class="stat-card mb-4">
     <form method="get" class="row g-3 align-items-end">
         <div class="col-md-3">
@@ -23,7 +23,7 @@
     </form>
 </div>
 
-<!-- Stats Overview -->
+
 <div class="row g-4 mb-4">
     <div class="col-md-3">
         <div class="stat-card text-center">
@@ -64,7 +64,7 @@
 </div>
 
 <div class="row g-4">
-    <!-- Sales Chart -->
+
     <div class="col-lg-8">
         <div class="stat-card">
             <h6 class="fw-bold mb-4"><i class="bi bi-graph-up me-2 text-primary"></i>المبيعات الشهرية</h6>
@@ -72,7 +72,7 @@
         </div>
     </div>
     
-    <!-- Order Status -->
+
     <div class="col-lg-4">
         <div class="stat-card h-100">
             <h6 class="fw-bold mb-4"><i class="bi bi-pie-chart me-2 text-primary"></i>حالة الطلبات</h6>
@@ -82,7 +82,7 @@
 </div>
 
 <div class="row g-4 mt-2">
-    <!-- Top Selling Products -->
+
     <div class="col-lg-6">
         <div class="stat-card">
             <h6 class="fw-bold mb-4"><i class="bi bi-trophy me-2 text-primary"></i>أكثر المنتجات مبيعاً</h6>
@@ -124,7 +124,7 @@
         </div>
     </div>
     
-    <!-- Top Categories -->
+
     <div class="col-lg-6">
         <div class="stat-card">
             <h6 class="fw-bold mb-4"><i class="bi bi-tags me-2 text-primary"></i>أفضل التصنيفات</h6>
@@ -165,7 +165,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Sales Chart
+
 const salesCtx = document.getElementById('salesChart').getContext('2d');
 new Chart(salesCtx, {
     type: 'line',
@@ -195,7 +195,7 @@ new Chart(salesCtx, {
     }
 });
 
-// Order Status Chart
+
 const statusCtx = document.getElementById('orderStatusChart').getContext('2d');
 new Chart(statusCtx, {
     type: 'doughnut',

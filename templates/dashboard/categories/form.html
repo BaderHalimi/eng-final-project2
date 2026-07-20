@@ -10,7 +10,7 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 
-                <!-- Image -->
+
                 <div class="mb-4 text-center">
                     <div class="mb-3">
                         {% if category and category.image %}
@@ -28,26 +28,26 @@
                     <input type="file" name="image" id="id_image" class="d-none" accept="image/*">
                 </div>
                 
-                <!-- Name -->
+
                 <div class="mb-3">
                     <label for="id_name" class="form-label">اسم التصنيف <span class="text-danger">*</span></label>
                     <input type="text" name="name" id="id_name" class="form-control" value="{{ category.name|default:'' }}" required>
                 </div>
                 
-                <!-- Slug -->
+
                 <div class="mb-3">
                     <label for="id_slug" class="form-label">الاسم اللطيف (Slug)</label>
                     <input type="text" name="slug" id="id_slug" class="form-control" value="{{ category.slug|default:'' }}" dir="ltr" placeholder="يتم إنشاؤه تلقائياً">
                     <div class="form-text">يستخدم في الروابط. اتركه فارغاً للإنشاء التلقائي.</div>
                 </div>
                 
-                <!-- Description -->
+
                 <div class="mb-3">
                     <label for="id_description" class="form-label">الوصف</label>
                     <textarea name="description" id="id_description" class="form-control" rows="3">{{ category.description|default:'' }}</textarea>
                 </div>
                 
-                <!-- Is Active -->
+
                 <div class="mb-4">
                     <div class="form-check form-switch">
                         <input type="checkbox" name="is_active" id="id_is_active" class="form-check-input" role="switch" {% if category.is_active or not category %}checked{% endif %}>
@@ -55,7 +55,7 @@
                     </div>
                 </div>
                 
-                <!-- Buttons -->
+
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-lg me-1"></i>{% if category %}حفظ التغييرات{% else %}إضافة التصنيف{% endif %}

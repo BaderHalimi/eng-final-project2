@@ -62,7 +62,7 @@ class ProductAdmin(admin.ModelAdmin):
     image_preview_large.short_description = "معاينة الصورة"
     
     def save_model(self, request, obj, form, change):
-        if not change:  # إذا كان منتج جديد
+        if not change:
             obj.created_by = request.user
         super().save_model(request, obj, form, change)
 

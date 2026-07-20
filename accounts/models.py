@@ -17,30 +17,30 @@ class CustomUser(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     
-    # التحقق من رقم الهاتف
+
     phone_regex = RegexValidator(
         regex=r'^\+?1?\d{9,15}$',
         message="رقم الهاتف يجب أن يكون بالصيغة: '+999999999'. حتى 15 رقم مسموح."
     )
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     
-    # أمان: التحقق من البريد الإلكتروني
+
     email_verified = models.BooleanField(default=False)
     email_verification_token = models.CharField(max_length=64, blank=True)
     email_verification_sent_at = models.DateTimeField(null=True, blank=True)
     
-    # أمان: التحقق الثنائي (2FA)
+
     two_factor_enabled = models.BooleanField(default=False)
     two_factor_secret = models.CharField(max_length=32, blank=True)
     
-    # أمان: تتبع محاولات تسجيل الدخول الفاشلة
+
     failed_login_attempts = models.PositiveSmallIntegerField(default=0)
     lockout_until = models.DateTimeField(null=True, blank=True)
     
-    # أمان: تتبع آخر تغيير لكلمة المرور
+
     password_changed_at = models.DateTimeField(null=True, blank=True)
     
-    # أمان: تخزين آخر IP تسجيل دخول
+
     last_login_ip = models.GenericIPAddressField(null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
@@ -72,7 +72,7 @@ class CustomUser(AbstractUser):
     def record_failed_login(self):
         """تسجيل محاولة فاشلة"""
         self.failed_login_attempts += 1
-        # قفل الحساب بعد 5 محاولات فاشلة لمدة 30 دقيقة
+
         if self.failed_login_attempts >= 5:
             self.lockout_until = timezone.now() + timezone.timedelta(minutes=30)
         self.save(update_fields=['failed_login_attempts', 'lockout_until'])
@@ -93,7 +93,7 @@ class Address(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
-        CustomUser, 
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='addresses'
     )
@@ -118,10 +118,10 @@ class Address(models.Model):
         ordering = ['-is_default', '-created_at']
 
     def save(self, *args, **kwargs):
-        # إذا كان هذا العنوان افتراضي، ألغِ الافتراضي من الآخرين
+
         if self.is_default:
             Address.objects.filter(
-                user=self.user, 
+                user=self.user,
                 address_type=self.address_type,
                 is_default=True
             ).update(is_default=False)
@@ -149,16 +149,16 @@ class UserActivity(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
-        CustomUser, 
+        CustomUser,
         on_delete=models.CASCADE,
         related_name='activities',
-        null=True,  # null في حالة محاولات الدخول الفاشلة بإيميل غير موجود
+        null=True,
         blank=True
     )
     activity_type = models.CharField(max_length=20, choices=ACTIVITY_TYPES)
     ip_address = models.GenericIPAddressField()
     user_agent = models.TextField(blank=True)
-    extra_data = models.JSONField(default=dict, blank=True)  # بيانات إضافية
+    extra_data = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

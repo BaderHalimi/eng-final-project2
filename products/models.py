@@ -19,7 +19,7 @@ def secure_image_path(instance, filename):
     يمنع: Path Traversal, Malicious File Upload
     """
     ext = filename.split('.')[-1].lower()
-    # السماح فقط بامتدادات الصور الآمنة
+
     allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']
     if ext not in allowed_extensions:
         ext = 'jpg'
@@ -34,9 +34,9 @@ class Category(models.Model):
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to=secure_image_path, blank=True, null=True)
     parent = models.ForeignKey(
-        'self', 
-        on_delete=models.CASCADE, 
-        null=True, 
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
         blank=True,
         related_name='children'
     )
@@ -64,28 +64,28 @@ class Product(models.Model):
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     description = models.TextField()
     
-    # أمان: استخدام DecimalField بدلاً من FloatField للدقة المالية
+
     price = models.DecimalField(
-        max_digits=10, 
+        max_digits=10,
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.01'))]
     )
     discount_price = models.DecimalField(
-        max_digits=10, 
-        decimal_places=2, 
-        null=True, 
+        max_digits=10,
+        decimal_places=2,
+        null=True,
         blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     
     category = models.ForeignKey(
-        Category, 
-        on_delete=models.SET_NULL, 
+        Category,
+        on_delete=models.SET_NULL,
         null=True,
         related_name='products'
     )
     
-    # أمان: تحديد الكمية بحدود معقولة
+
     stock = models.PositiveIntegerField(
         default=0,
         validators=[MaxValueValidator(999999)]
@@ -96,10 +96,10 @@ class Product(models.Model):
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     
-    # أمان: تتبع من أضاف المنتج
+
     created_by = models.ForeignKey(
-        User, 
-        on_delete=models.SET_NULL, 
+        User,
+        on_delete=models.SET_NULL,
         null=True,
         related_name='products_created'
     )
@@ -116,7 +116,7 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-            # التأكد من عدم تكرار الـ slug
+
             counter = 1
             original_slug = self.slug
             while Product.objects.filter(slug=self.slug).exists():
@@ -142,7 +142,7 @@ class Product(models.Model):
 class ProductImage(models.Model):
     """صور إضافية للمنتج"""
     product = models.ForeignKey(
-        Product, 
+        Product,
         on_delete=models.CASCADE,
         related_name='images'
     )
@@ -161,28 +161,28 @@ class ProductImage(models.Model):
 class Review(models.Model):
     """تقييمات المنتجات"""
     product = models.ForeignKey(
-        Product, 
+        Product,
         on_delete=models.CASCADE,
         related_name='reviews'
     )
     user = models.ForeignKey(
-        User, 
+        User,
         on_delete=models.CASCADE,
         related_name='reviews'
     )
-    # أمان: تحديد نطاق التقييم
+
     rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(5)]
     )
     title = models.CharField(max_length=100)
-    comment = models.TextField(max_length=1000)  # تحديد الحد الأقصى
+    comment = models.TextField(max_length=1000)
     
-    is_approved = models.BooleanField(default=False)  # يحتاج موافقة
+    is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        # أمان: مستخدم واحد = تقييم واحد لكل منتج
+
         unique_together = ['product', 'user']
         ordering = ['-created_at']
 

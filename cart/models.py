@@ -13,7 +13,7 @@ class Cart(models.Model):
     """سلة التسوق"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    # السلة يمكن أن تكون لمستخدم مسجل أو زائر (session)
+
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -54,14 +54,14 @@ class Cart(models.Model):
         user_cart, created = Cart.objects.get_or_create(user=user)
         
         for item in self.items.all():
-            # التحقق من أن المنتج ما زال متاحاً
+
             if item.product.is_active and item.product.is_in_stock:
                 user_item, created = CartItem.objects.get_or_create(
                     cart=user_cart,
                     product=item.product,
                     defaults={'quantity': 0}
                 )
-                # لا تتجاوز المخزون المتاح
+
                 new_quantity = min(
                     user_item.quantity + item.quantity,
                     item.product.stock
@@ -69,7 +69,7 @@ class Cart(models.Model):
                 user_item.quantity = new_quantity
                 user_item.save()
         
-        # حذف سلة الزائر
+
         self.delete()
         return user_cart
 
@@ -88,16 +88,16 @@ class CartItem(models.Model):
         related_name='cart_items'
     )
     
-    # أمان: تحديد الحد الأقصى للكمية
+
     quantity = models.PositiveIntegerField(
         default=1,
         validators=[
             MinValueValidator(1),
-            MaxValueValidator(99)  # حد أقصى معقول
+            MaxValueValidator(99)
         ]
     )
     
-    # تخزين السعر وقت الإضافة للتتبع
+
     price_at_addition = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -112,11 +112,11 @@ class CartItem(models.Model):
         unique_together = ['cart', 'product']
 
     def save(self, *args, **kwargs):
-        # أمان: التأكد من أن الكمية لا تتجاوز المخزون
+
         if self.quantity > self.product.stock:
             self.quantity = self.product.stock
         
-        # تخزين السعر الحالي
+
         if not self.price_at_addition:
             self.price_at_addition = self.product.final_price
         
@@ -134,8 +134,8 @@ class CartItem(models.Model):
     def is_available(self):
         """التحقق من توفر المنتج"""
         return (
-            self.product.is_active and 
-            self.product.is_in_stock and 
+            self.product.is_active and
+            self.product.is_in_stock and
             self.quantity <= self.product.stock
         )
 

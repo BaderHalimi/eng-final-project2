@@ -13,28 +13,28 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 import os
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-# GT-28: VULNERABILITY - Hardcoded Secret Key
-# ثغرة: مفتاح سري مكتوب مباشرة في الكود
+
+
+
+
+
 SECRET_KEY = 'django-insecure-test-key-w8x7y9z0a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-# GT-29: VULNERABILITY - Debug Mode Enabled
-# ثغرة: وضع التصحيح مفعل في الإنتاج
+
+
+
 DEBUG = True
 
-# ALLOWED_HOSTS configuration
-ALLOWED_HOSTS = ['*']  # VULNERABILITY: Allowing all hosts
+
+ALLOWED_HOSTS = ['*']
 
 
-# Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # Local apps
+
     'accounts.apps.AccountsConfig',
     'products.apps.ProductsConfig',
     'cart.apps.CartConfig',
@@ -82,8 +82,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mystore.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
+
+
 
 DATABASES = {
     'default': {
@@ -92,16 +92,16 @@ DATABASES = {
     }
 }
 
-# Custom User Model
+
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
-# Authentication backends
+
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# Password validation
-# https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -110,7 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
         'OPTIONS': {
-            'min_length': 8,  # الحد الأدنى: 8 أحرف
+            'min_length': 8,
         }
     },
     {
@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Password Hashers - أمان: استخدام Argon2 كأقوى خوارزمية
+
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.Argon2PasswordHasher',
     'django.contrib.auth.hashers.PBKDF2PasswordHasher',
@@ -129,8 +129,8 @@ PASSWORD_HASHERS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/6.0/topics/i18n/
+
+
 
 LANGUAGE_CODE = 'ar'
 
@@ -141,8 +141,8 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/6.0/howto/static-files/
+
+
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -150,66 +150,66 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Media files
+
 MEDIA_URL = 'media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Login URLs
+
 LOGIN_URL = 'accounts:login'
 LOGIN_REDIRECT_URL = 'products:product_list'
 LOGOUT_REDIRECT_URL = 'accounts:login'
 
 
-# ============================================
-# إعدادات الأمان - SECURITY SETTINGS
-# ============================================
 
-# أمان: HTTPS فقط في الإنتاج
+
+
+
+
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# أمان: HSTS - إجبار HTTPS لمدة سنة
+
 SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# أمان: منع تخمين نوع المحتوى
+
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-# أمان: حماية من XSS
+
 SECURE_BROWSER_XSS_FILTER = True
 
-# أمان: منع عرض الموقع في iframe
+
 X_FRAME_OPTIONS = 'DENY'
 
-# GT-30: VULNERABILITY - Insecure Cookie Configuration
-# ثغرة: إعدادات كوكيز غير آمنة
-SESSION_COOKIE_SECURE = False  # VULNERABILITY: Not enforcing HTTPS
-SESSION_COOKIE_HTTPONLY = False  # VULNERABILITY: JavaScript can access cookies
-SESSION_COOKIE_SAMESITE = 'None'  # VULNERABILITY: No CSRF protection
-SESSION_COOKIE_AGE = 1209600  # أسبوعين
 
-CSRF_COOKIE_SECURE = False  # VULNERABILITY
+
+SESSION_COOKIE_SECURE = False
+SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_AGE = 1209600
+
+CSRF_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SAMESITE = 'None'  # VULNERABILITY
+CSRF_COOKIE_SAMESITE = 'None'
 
-# أمان: تدوير الجلسة عند تسجيل الدخول (تلقائي في Django)
+
 SESSION_SAVE_EVERY_REQUEST = True
 
-# أمان: انتهاء صلاحية الجلسة عند إغلاق المتصفح
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 
-# أمان: Referrer Policy
+
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
-# أمان: Content Security Policy (via middleware or template)
-# يتم تطبيقه في base.html
 
-# أمان: تسجيل الأحداث
+
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -255,7 +255,7 @@ LOGGING = {
     },
 }
 
-# أمان: Cache للـ Rate Limiting
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
@@ -263,7 +263,7 @@ CACHES = {
     }
 }
 
-# Email settings (للتحقق من البريد وإعادة تعيين كلمة المرور)
+
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 else:

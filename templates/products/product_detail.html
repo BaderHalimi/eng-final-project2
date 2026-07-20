@@ -103,7 +103,7 @@
 
 {% block content %}
 <div class="container">
-    <!-- Breadcrumb -->
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'products:home' %}" class="text-decoration-none"><i class="bi bi-house"></i> الرئيسية</a></li>
@@ -116,7 +116,7 @@
     </nav>
 
     <div class="row g-5">
-        <!-- Product Gallery -->
+
         <div class="col-lg-6">
             <div class="product-gallery">
                 <div class="main-image shadow-sm">
@@ -140,10 +140,10 @@
             </div>
         </div>
 
-        <!-- Product Info -->
+
         <div class="col-lg-6">
             <div class="product-info">
-                <!-- Badges -->
+
                 <div class="mb-3">
                     {% if product.discount_price %}
                     <span class="badge badge-sale fs-6"><i class="bi bi-percent me-1"></i>خصم</span>
@@ -158,17 +158,17 @@
                     {% endif %}
                 </div>
 
-                <!-- Category -->
+
                 {% if product.category %}
                 <a href="{% url 'products:category_products' product.category.slug %}" class="text-muted text-decoration-none">
                     <i class="bi bi-tag me-1"></i>{{ product.category.name }}
                 </a>
                 {% endif %}
 
-                <!-- Title -->
+
                 <h1 class="fw-bold mt-2 mb-3">{{ product.name }}</h1>
 
-                <!-- Rating -->
+
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <div class="rating fs-5">
                         {% with avg=product.average_rating|default:0 %}
@@ -187,7 +187,7 @@
                     <a href="#reviews" class="text-primary text-decoration-none">اقرأ التقييمات</a>
                 </div>
 
-                <!-- Price -->
+
                 <div class="mb-4 p-4 bg-light rounded-4">
                     <div class="d-flex align-items-baseline gap-3">
                         <span class="fs-1 fw-bold text-primary">${{ product.final_price }}</span>
@@ -201,10 +201,10 @@
                     <small class="text-muted">شامل الضريبة</small>
                 </div>
 
-                <!-- Short Description -->
+
                 <p class="text-muted mb-4">{{ product.description|truncatewords:50 }}</p>
 
-                <!-- Stock Info -->
+
                 {% if product.is_in_stock %}
                 <div class="d-flex align-items-center gap-2 mb-4 text-success">
                     <i class="bi bi-check-circle-fill"></i>
@@ -217,7 +217,7 @@
                 </div>
                 {% endif %}
 
-                <!-- Quantity & Add to Cart -->
+
                 {% if product.is_in_stock %}
                 <div class="d-flex flex-wrap gap-3 mb-4">
                     <div class="quantity-selector">
@@ -236,7 +236,7 @@
                 </button>
                 {% endif %}
 
-                <!-- Actions -->
+
                 <div class="d-flex gap-3 mb-4">
                     <button class="btn btn-outline-secondary" id="wishlist-btn" data-product-id="{{ product.id }}">
                         <i class="bi bi-heart me-2"></i>أضف للمفضلة
@@ -246,7 +246,7 @@
                     </button>
                 </div>
 
-                <!-- Features -->
+
                 <div class="row g-3">
                     <div class="col-6">
                         <div class="d-flex align-items-center gap-2 p-3 bg-light rounded-3">
@@ -289,7 +289,7 @@
         </div>
     </div>
 
-    <!-- Product Tabs -->
+
     <div class="mt-5">
         <ul class="nav nav-tabs product-tabs border-0" role="tablist">
             <li class="nav-item">
@@ -310,7 +310,7 @@
         </ul>
         
         <div class="tab-content bg-white rounded-4 shadow-sm p-4 mt-3">
-            <!-- Description -->
+
             <div class="tab-pane fade show active" id="description">
                 <div class="row">
                     <div class="col-lg-8">
@@ -322,7 +322,7 @@
                 </div>
             </div>
             
-            <!-- Specifications -->
+
             <div class="tab-pane fade" id="specifications">
                 <h4 class="fw-bold mb-4">المواصفات التقنية</h4>
                 <table class="table table-striped">
@@ -345,13 +345,13 @@
                 </table>
             </div>
             
-            <!-- Reviews -->
+
             <div class="tab-pane fade" id="reviews">
                 <div class="row">
                     <div class="col-lg-8">
                         <h4 class="fw-bold mb-4">تقييمات العملاء</h4>
                         
-                        <!-- Reviews Summary -->
+
                         <div class="d-flex align-items-center gap-4 p-4 bg-light rounded-4 mb-4">
                             <div class="text-center">
                                 <div class="display-4 fw-bold text-primary">{{ product.average_rating|default:"0"|floatformat:1 }}</div>
@@ -364,7 +364,7 @@
                             </div>
                         </div>
                         
-                        <!-- Review Form -->
+
                         {% if user.is_authenticated %}
                         <div class="card border-0 shadow-sm mb-4">
                             <div class="card-body">
@@ -399,7 +399,7 @@
                         </div>
                         {% endif %}
                         
-                        <!-- Reviews List -->
+
                         {% for review in product.reviews.all %}
                         <div class="review-item">
                             <div class="d-flex justify-content-between align-items-start mb-2">
@@ -434,7 +434,7 @@
         </div>
     </div>
 
-    <!-- Related Products -->
+
     {% if related_products %}
     <section class="mt-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -473,7 +473,7 @@
 
 {% block extra_js %}
 <script>
-// Quantity selector
+
 function changeQuantity(delta) {
     const input = document.getElementById('quantity');
     const max = parseInt(input.max);
@@ -483,14 +483,14 @@ function changeQuantity(delta) {
     input.value = value;
 }
 
-// Change image
+
 function changeImage(img) {
     document.getElementById('main-product-image').src = img.src;
     document.querySelectorAll('.thumbnail-images img').forEach(i => i.classList.remove('active'));
     img.classList.add('active');
 }
 
-// Add to cart
+
 document.getElementById('add-to-cart-btn')?.addEventListener('click', async function() {
     const productId = this.dataset.productId;
     const quantity = parseInt(document.getElementById('quantity').value);
@@ -518,7 +518,7 @@ document.getElementById('add-to-cart-btn')?.addEventListener('click', async func
     }, 2000);
 });
 
-// Buy now
+
 document.getElementById('buy-now-btn')?.addEventListener('click', async function() {
     const productId = this.dataset.productId;
     const quantity = parseInt(document.getElementById('quantity').value);
@@ -533,7 +533,7 @@ document.getElementById('buy-now-btn')?.addEventListener('click', async function
     }
 });
 
-// Wishlist
+
 document.getElementById('wishlist-btn')?.addEventListener('click', async function() {
     const productId = this.dataset.productId;
     
@@ -552,7 +552,7 @@ document.getElementById('wishlist-btn')?.addEventListener('click', async functio
     }
 });
 
-// Share
+
 function shareProduct() {
     if (navigator.share) {
         navigator.share({
@@ -566,7 +566,7 @@ function shareProduct() {
     }
 }
 
-// Rating input
+
 document.querySelectorAll('.rating-input label').forEach(label => {
     label.addEventListener('click', function() {
         const value = this.previousElementSibling.value;

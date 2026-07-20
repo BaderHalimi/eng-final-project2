@@ -17,10 +17,10 @@ class SecureCharField(forms.CharField):
     def clean(self, value):
         value = super().clean(value)
         if value:
-            # تنظيف HTML الخطير
+
             value = bleach.clean(
-                value, 
-                tags=[], 
+                value,
+                tags=[],
                 attributes={},
                 strip=True
             )
@@ -36,11 +36,11 @@ class SecureTextarea(forms.CharField):
     def clean(self, value):
         value = super().clean(value)
         if value:
-            # السماح ببعض العناصر الآمنة فقط
+
             allowed_tags = ['p', 'br', 'strong', 'em', 'ul', 'ol', 'li']
             value = bleach.clean(
-                value, 
-                tags=allowed_tags, 
+                value,
+                tags=allowed_tags,
                 attributes={},
                 strip=True
             )
@@ -126,11 +126,11 @@ class ProductImageForm(forms.Form):
     def clean_image(self):
         image = self.cleaned_data.get('image')
         if image:
-            # التحقق من الحجم (5MB كحد أقصى)
+
             if image.size > 5 * 1024 * 1024:
                 raise ValidationError('حجم الصورة يجب أن لا يتجاوز 5MB')
             
-            # التحقق من نوع الملف الحقيقي
+
             import imghdr
             image_type = imghdr.what(image)
             if image_type not in ['jpeg', 'png', 'gif', 'webp']:

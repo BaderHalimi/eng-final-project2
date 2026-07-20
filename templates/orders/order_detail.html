@@ -85,7 +85,7 @@
 
 {% block content %}
 <div class="container">
-    <!-- Breadcrumb -->
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'products:home' %}" class="text-decoration-none"><i class="bi bi-house"></i> الرئيسية</a></li>
@@ -95,7 +95,7 @@
         </ol>
     </nav>
 
-    <!-- Order Header -->
+
     <div class="order-detail-header mb-4">
         <div class="row align-items-center">
             <div class="col-md-8">
@@ -150,9 +150,9 @@
     </div>
 
     <div class="row g-4">
-        <!-- Main Content -->
+
         <div class="col-lg-8">
-            <!-- Order Timeline -->
+
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0 fw-bold">
@@ -210,7 +210,7 @@
                 </div>
             </div>
 
-            <!-- Products List -->
+
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-header bg-white border-0 py-3">
                     <h5 class="mb-0 fw-bold">
@@ -242,7 +242,7 @@
                 </div>
             </div>
 
-            <!-- Addresses -->
+
             <div class="row g-4">
                 <div class="col-md-6">
                     <div class="card border-0 shadow-sm rounded-4 h-100">
@@ -296,7 +296,7 @@
             </div>
         </div>
 
-        <!-- Order Summary Sidebar -->
+
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
                 <div class="card-header bg-white border-0 py-3">
@@ -329,7 +329,7 @@
                         <h4 class="mb-0 fw-bold text-primary">${{ order.total }}</h4>
                     </div>
                     
-                    <!-- Payment Info -->
+
                     <div class="bg-light rounded-3 p-3 mb-3">
                         <div class="mb-3">
                             <small class="text-muted d-block mb-1">طريقة الدفع</small>
@@ -376,7 +376,7 @@
                     </div>
                     {% endif %}
                     
-                    <!-- Actions -->
+
                     {% if order.can_cancel %}
                     <button class="btn btn-outline-danger w-100" id="cancel-order-btn">
                         <i class="bi bi-x-circle me-1"></i>إلغاء الطلب

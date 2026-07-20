@@ -11,11 +11,11 @@
     
     <title>{% block title %}MyStore - متجرك الإلكتروني{% endblock %}</title>
     
-    <!-- Bootstrap RTL -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <!-- Google Fonts -->
+
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -43,7 +43,7 @@
             line-height: 1.7;
         }
         
-        /* Top Bar */
+
         .top-bar {
             background: linear-gradient(135deg, var(--dark-color) 0%, #0f172a 100%);
             color: #94a3b8;
@@ -61,7 +61,7 @@
             color: white;
         }
         
-        /* Navbar */
+
         .main-navbar {
             background: white;
             box-shadow: 0 2px 15px rgba(0,0,0,0.08);
@@ -97,7 +97,7 @@
             background-color: #eff6ff;
         }
         
-        /* Search Box */
+
         .search-box {
             position: relative;
             max-width: 450px;
@@ -138,7 +138,7 @@
             background: var(--primary-dark);
         }
         
-        /* Icon Buttons */
+
         .icon-btn {
             width: 45px;
             height: 45px;
@@ -171,7 +171,7 @@
             font-weight: 600;
         }
         
-        /* Cards */
+
         .card {
             border: none;
             border-radius: 16px;
@@ -190,7 +190,7 @@
             object-fit: cover;
         }
         
-        /* Buttons */
+
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
             border: none;
@@ -221,7 +221,7 @@
             transform: translateY(-2px);
         }
         
-        /* Section Titles */
+
         .section-title {
             font-size: 2rem;
             font-weight: 800;
@@ -234,7 +234,7 @@
             font-size: 1.1rem;
         }
         
-        /* Product Card */
+
         .product-card {
             position: relative;
         }
@@ -296,7 +296,7 @@
             font-weight: 400;
         }
         
-        /* Rating Stars */
+
         .rating {
             color: #fbbf24;
         }
@@ -307,7 +307,7 @@
             font-size: 0.9rem;
         }
         
-        /* Badge Styles */
+
         .badge-sale {
             background: var(--danger-color);
             color: white;
@@ -324,7 +324,7 @@
             border-radius: 6px;
         }
         
-        /* Footer */
+
         .main-footer {
             background: linear-gradient(135deg, var(--dark-color) 0%, #0f172a 100%);
             color: #94a3b8;
@@ -386,7 +386,7 @@
             margin-top: 50px;
         }
         
-        /* Category Card */
+
         .category-card {
             text-align: center;
             padding: 30px 20px;
@@ -427,7 +427,7 @@
             margin: 0;
         }
         
-        /* Features Section */
+
         .feature-box {
             text-align: center;
             padding: 30px;
@@ -458,7 +458,7 @@
             font-size: 0.95rem;
         }
         
-        /* Hero Banner */
+
         .hero-banner {
             background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);
             border-radius: 24px;
@@ -503,7 +503,7 @@
             transform: scale(1.05);
         }
         
-        /* Responsive */
+
         @media (max-width: 991px) {
             .search-box {
                 max-width: 100%;
@@ -519,7 +519,7 @@
             }
         }
         
-        /* Animations */
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -539,7 +539,7 @@
     </style>
 </head>
 <body>
-    <!-- Top Bar -->
+
     <div class="top-bar d-none d-lg-block">
         <div class="container">
             <div class="row align-items-center">
@@ -556,17 +556,17 @@
         </div>
     </div>
 
-    <!-- Main Navbar -->
+
     <nav class="main-navbar sticky-top">
         <div class="container">
             <div class="d-flex align-items-center justify-content-between flex-wrap">
-                <!-- Logo -->
+
                 <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'products:home' %}">
                     <i class="bi bi-bag-heart-fill"></i>
                     MyStore
                 </a>
                 
-                <!-- Search Box -->
+
                 <div class="search-box d-none d-lg-block">
                     <form action="{% url 'products:product_list' %}" method="get">
                         <input type="text" name="q" placeholder="ابحث عن منتجات...">
@@ -574,7 +574,7 @@
                     </form>
                 </div>
                 
-                <!-- Icons -->
+
                 <div class="d-flex align-items-center gap-3">
                     {% if user.is_authenticated %}
                     <div class="dropdown">
@@ -617,7 +617,7 @@
                 </div>
             </div>
             
-            <!-- Mobile Search -->
+
             <div class="search-box d-lg-none mt-3">
                 <form action="{% url 'products:product_list' %}" method="get">
                     <input type="text" name="q" placeholder="ابحث عن منتجات...">
@@ -627,7 +627,7 @@
         </div>
     </nav>
     
-    <!-- Secondary Nav -->
+
     <nav class="bg-white border-bottom d-none d-lg-block">
         <div class="container">
             <ul class="nav py-2">
@@ -653,7 +653,7 @@
         </div>
     </nav>
 
-    <!-- Messages -->
+
     {% if messages %}
     <div class="container mt-4">
         {% for message in messages %}
@@ -674,16 +674,16 @@
     </div>
     {% endif %}
 
-    <!-- Main Content -->
+
     <main class="py-4">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
+
     <footer class="main-footer">
         <div class="container">
             <div class="row g-4">
-                <!-- About -->
+
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-widget">
                         <a href="{% url 'products:home' %}" class="d-flex align-items-center gap-2 text-white text-decoration-none mb-3">
@@ -700,7 +700,7 @@
                     </div>
                 </div>
                 
-                <!-- Quick Links -->
+
                 <div class="col-lg-2 col-md-6">
                     <div class="footer-widget">
                         <h5>روابط سريعة</h5>
@@ -714,7 +714,7 @@
                     </div>
                 </div>
                 
-                <!-- Customer Service -->
+
                 <div class="col-lg-2 col-md-6">
                     <div class="footer-widget">
                         <h5>خدمة العملاء</h5>
@@ -728,7 +728,7 @@
                     </div>
                 </div>
                 
-                <!-- Contact -->
+
                 <div class="col-lg-4 col-md-6">
                     <div class="footer-widget">
                         <h5>تواصل معنا</h5>
@@ -750,7 +750,7 @@
                                 السبت - الخميس: 9 ص - 9 م
                             </li>
                         </ul>
-                        <!-- Payment Methods -->
+
                         <div class="mt-4">
                             <p class="mb-2 text-white">طرق الدفع المتاحة:</p>
                             <div class="d-flex gap-2 flex-wrap">
@@ -781,15 +781,15 @@
         </div>
     </footer>
 
-    <!-- Bootstrap JS -->
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- CSRF Token for AJAX -->
+
     <script>
-        // CSRF Token من Django template tag (أكثر أماناً)
+
         const csrftoken = '{{ csrf_token }}';
         
-        // دالة بديلة لقراءة من الـ cookie إذا لزم الأمر
+
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -821,7 +821,7 @@
             }
         }
         
-        // Toast notification function
+
         function showToast(message, type = 'success') {
             const toastHtml = `
                 <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">

@@ -28,7 +28,7 @@ def get_or_create_cart(request):
     if request.user.is_authenticated:
         cart, created = Cart.objects.get_or_create(user=request.user)
         
-        # دمج سلة الزائر إذا وجدت
+
         session_key = request.session.session_key
         if session_key:
             try:
@@ -51,7 +51,7 @@ def cart_view(request):
     cart = get_or_create_cart(request)
     items = cart.items.select_related('product').all()
     
-    # التحقق من توفر المنتجات
+
     unavailable_items = []
     for item in items:
         if not item.is_available:
@@ -82,25 +82,25 @@ def add_to_cart(request):
     except (json.JSONDecodeError, ValueError, TypeError):
         return JsonResponse({'success': False, 'error': 'بيانات غير صالحة'}, status=400)
     
-    # التحقق من الكمية
+
     if quantity < 1 or quantity > 99:
         return JsonResponse({'success': False, 'error': 'الكمية غير صالحة'}, status=400)
     
-    # Rate limiting
+
     ip = request.META.get('REMOTE_ADDR')
     cache_key = f"cart_add_{ip}"
     attempts = cache.get(cache_key, 0)
-    if attempts > 30:  # 30 إضافة في الدقيقة
+    if attempts > 30:
         return JsonResponse({'success': False, 'error': 'محاولات كثيرة'}, status=429)
     cache.set(cache_key, attempts + 1, 60)
     
-    # الحصول على المنتج
+
     try:
         product = Product.objects.get(id=product_id, is_active=True)
     except Product.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'المنتج غير موجود'}, status=404)
     
-    # التحقق من المخزون
+
     if not product.is_in_stock:
         return JsonResponse({'success': False, 'error': 'المنتج غير متوفر'}, status=400)
     
@@ -115,7 +115,7 @@ def add_to_cart(request):
         
         new_quantity = cart_item.quantity + quantity
         
-        # التأكد من عدم تجاوز المخزون
+
         if new_quantity > product.stock:
             new_quantity = product.stock
             message = f'تم إضافة الكمية المتوفرة فقط ({product.stock})'
@@ -151,12 +151,12 @@ def update_cart_item(request):
     cart = get_or_create_cart(request)
     
     try:
-        # أمان: التأكد من أن العنصر ينتمي لسلة المستخدم
+
         item = CartItem.objects.get(id=item_id, cart=cart)
     except CartItem.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'العنصر غير موجود'}, status=404)
     
-    # التحقق من المخزون
+
     if quantity > item.product.stock:
         quantity = item.product.stock
     
@@ -186,7 +186,7 @@ def remove_from_cart(request):
     cart = get_or_create_cart(request)
     
     try:
-        # أمان: التأكد من أن العنصر ينتمي لسلة المستخدم
+
         item = CartItem.objects.get(id=item_id, cart=cart)
         item.delete()
     except CartItem.DoesNotExist:
@@ -212,7 +212,7 @@ def clear_cart(request):
     })
 
 
-# Wishlist Views
+
 @login_required
 @csrf_protect
 def wishlist_view(request):
@@ -271,17 +271,17 @@ def remove_from_wishlist(request):
     return JsonResponse({'success': True, 'message': 'تم إزالة المنتج'})
 
 
-# ====================================================================
-# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
-# نقاط نهاية ضعيفة للاختبار الأمني فقط
-# ====================================================================
+
+
+
+
 
 from django.db import connection
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-# GT-25: SQL Injection in Cart Discount
+
 def apply_discount_code(request):
     """
     VULNERABLE: SQL Injection
@@ -292,7 +292,7 @@ def apply_discount_code(request):
     if not code:
         return JsonResponse({'error': 'Code required'}, status=400)
     
-    # VULNERABILITY: Direct SQL without parameterization
+
     with connection.cursor() as cursor:
         sql = f"SELECT code, discount_percent, discount_amount FROM orders_coupon WHERE code = '{code}' AND is_active = TRUE"
         cursor.execute(sql)
@@ -313,8 +313,8 @@ def apply_discount_code(request):
         }, status=404)
 
 
-# GT-26: CSRF in Cart Update
-@csrf_exempt  # VULNERABILITY: CSRF disabled
+
+@csrf_exempt
 def update_cart_ajax(request):
     """
     VULNERABLE: CSRF Disabled
@@ -344,7 +344,7 @@ def update_cart_ajax(request):
         return JsonResponse({'success': False, 'error': 'Item not found'}, status=404)
 
 
-# GT-27: IDOR in Cart Details
+
 def get_cart_details(request):
     """
     VULNERABLE: IDOR (Insecure Direct Object Reference)
@@ -355,7 +355,7 @@ def get_cart_details(request):
     if not cart_id:
         return JsonResponse({'error': 'cart_id required'}, status=400)
     
-    # VULNERABILITY: No ownership verification
+
     try:
         cart = Cart.objects.get(id=cart_id)
         items = cart.items.select_related('product').all()

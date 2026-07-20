@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <!-- Hero Banner -->
+
     <section class="hero-banner mb-5">
         <div class="row align-items-center">
             <div class="col-lg-7">
@@ -28,7 +28,7 @@
         </div>
     </section>
     
-    <!-- Features -->
+
     <section class="mb-5">
         <div class="row g-4">
             <div class="col-md-3 col-6">
@@ -70,7 +70,7 @@
         </div>
     </section>
     
-    <!-- Categories -->
+
     <section class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -91,7 +91,7 @@
                 </a>
             </div>
             {% empty %}
-            <!-- Default Categories when none exist -->
+
             <div class="col-lg-2 col-md-3 col-4">
                 <a href="{% url 'products:product_list' %}" class="category-card shadow-sm">
                     <div class="icon-box"><i class="bi bi-phone"></i></div>
@@ -132,7 +132,7 @@
         </div>
     </section>
     
-    <!-- Featured Products -->
+
     <section class="mb-5" id="featured">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -148,7 +148,7 @@
             {% for product in featured_products %}
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="card product-card shadow-sm h-100">
-                    <!-- Badges -->
+
                     <div class="product-badges">
                         {% if product.discount_price %}
                         <span class="badge badge-sale">
@@ -160,7 +160,7 @@
                         {% endif %}
                     </div>
                     
-                    <!-- Actions -->
+
                     <div class="product-actions">
                         <button class="action-btn wishlist" data-product-id="{{ product.id }}" title="أضف للمفضلة">
                             <i class="bi bi-heart"></i>
@@ -170,7 +170,7 @@
                         </button>
                     </div>
                     
-                    <!-- Image -->
+
                     <a href="{% url 'products:product_detail' product.slug %}">
                         {% if product.image %}
                         <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
@@ -182,19 +182,19 @@
                     </a>
                     
                     <div class="card-body">
-                        <!-- Category -->
+
                         {% if product.category %}
                         <small class="text-muted">{{ product.category.name }}</small>
                         {% endif %}
                         
-                        <!-- Title -->
+
                         <h6 class="card-title mt-1 mb-2">
                             <a href="{% url 'products:product_detail' product.slug %}" class="text-decoration-none text-dark">
                                 {{ product.name|truncatechars:40 }}
                             </a>
                         </h6>
                         
-                        <!-- Rating -->
+
                         <div class="rating mb-2">
                             {% for i in "12345" %}
                                 {% if forloop.counter <= product.average_rating|default:4 %}
@@ -206,7 +206,7 @@
                             <small class="text-muted ms-1">({{ product.reviews.count }})</small>
                         </div>
                         
-                        <!-- Price -->
+
                         <div class="d-flex align-items-center gap-2">
                             <span class="product-price">${{ product.final_price }}</span>
                             {% if product.discount_price %}
@@ -229,7 +229,7 @@
                 </div>
             </div>
             {% empty %}
-            <!-- Sample Products when none exist -->
+
             {% for i in "1234" %}
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="card product-card shadow-sm h-100">
@@ -279,7 +279,7 @@
         </div>
     </section>
     
-    <!-- Promotional Banners -->
+
     <section class="mb-5">
         <div class="row g-4">
             <div class="col-md-6">
@@ -307,7 +307,7 @@
         </div>
     </section>
     
-    <!-- Latest Products -->
+
     <section class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -362,7 +362,7 @@
                 </div>
             </div>
             {% empty %}
-            <!-- Sample when no products -->
+
             {% for i in "1234" %}
             <div class="col-lg-3 col-md-4 col-6">
                 <div class="card product-card shadow-sm h-100">
@@ -385,7 +385,7 @@
         </div>
     </section>
     
-    <!-- Best Sellers -->
+
     <section class="mb-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -458,7 +458,7 @@
         </div>
     </section>
     
-    <!-- Newsletter -->
+
     <section class="mb-5">
         <div class="rounded-4 p-5 text-center text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, var(--primary-color) 0%, #7c3aed 100%);">
             <div class="position-relative" style="z-index: 2;">
@@ -481,7 +481,7 @@
         </div>
     </section>
     
-    <!-- Why Choose Us -->
+
     <section class="mb-5">
         <div class="text-center mb-5">
             <h2 class="section-title">لماذا MyStore؟</h2>
@@ -523,7 +523,7 @@
 
 {% block extra_js %}
 <script>
-// Add to cart functionality
+
 document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
     btn.addEventListener('click', async function() {
         const productId = this.dataset.productId;
@@ -553,7 +553,7 @@ document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
     });
 });
 
-// Add to wishlist
+
 document.querySelectorAll('.wishlist').forEach(btn => {
     btn.addEventListener('click', async function() {
         const productId = this.dataset.productId;

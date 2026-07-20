@@ -41,7 +41,7 @@ class Order(models.Model):
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
-    # رقم الطلب للعرض (سهل القراءة)
+
     order_number = models.CharField(max_length=20, unique=True, editable=False)
     
     user = models.ForeignKey(
@@ -51,34 +51,34 @@ class Order(models.Model):
         related_name='orders'
     )
     
-    # حالة الطلب والدفع
+
     status = models.CharField(max_length=20, choices=ORDER_STATUS, default='pending')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='pending')
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
     
-    # المبالغ - محمية بـ integrity_hash
+
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     tax = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     discount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     total = models.DecimalField(max_digits=10, decimal_places=2)
     
-    # أمان: hash للتحقق من سلامة البيانات
+
     integrity_hash = models.CharField(max_length=64, editable=False)
     
-    # عناوين الشحن والفوترة (نسخة من البيانات وقت الطلب)
+
     shipping_address = models.JSONField()
     billing_address = models.JSONField()
     
-    # معلومات إضافية
+
     notes = models.TextField(blank=True, max_length=500)
     
-    # معلومات الشحن
+
     tracking_number = models.CharField(max_length=100, blank=True)
     shipped_at = models.DateTimeField(null=True, blank=True)
     delivered_at = models.DateTimeField(null=True, blank=True)
     
-    # معلومات IP للأمان
+
     ip_address = models.GenericIPAddressField()
     user_agent = models.TextField(blank=True)
     
@@ -94,12 +94,12 @@ class Order(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        # إنشاء رقم الطلب
+
         if not self.order_number:
             import time
             self.order_number = f"ORD-{int(time.time())}-{uuid.uuid4().hex[:6].upper()}"
         
-        # حساب الـ integrity hash
+
         self.integrity_hash = self._calculate_integrity_hash()
         
         super().save(*args, **kwargs)
@@ -118,7 +118,7 @@ class Order(models.Model):
             'order_number': self.order_number or '',
         }
         data_str = json.dumps(data, sort_keys=True)
-        # في الإنتاج، استخدم SECRET_KEY من settings
+
         secret = getattr(settings, 'SECRET_KEY', 'default-secret')
         return hashlib.sha256(f"{data_str}{secret}".encode()).hexdigest()
 
@@ -150,7 +150,7 @@ class OrderItem(models.Model):
         related_name='order_items'
     )
     
-    # نسخة من بيانات المنتج وقت الطلب
+
     product_name = models.CharField(max_length=200)
     product_sku = models.CharField(max_length=50, blank=True)
     
@@ -158,7 +158,7 @@ class OrderItem(models.Model):
         validators=[MinValueValidator(1), MaxValueValidator(99)]
     )
     
-    # السعر وقت الطلب
+
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     
@@ -168,7 +168,7 @@ class OrderItem(models.Model):
         ordering = ['created_at']
 
     def save(self, *args, **kwargs):
-        # حساب السعر الإجمالي
+
         self.total_price = self.unit_price * self.quantity
         super().save(*args, **kwargs)
 
@@ -194,14 +194,14 @@ class Coupon(models.Model):
         validators=[MinValueValidator(Decimal('0.01'))]
     )
     
-    # الحد الأدنى للطلب
+
     minimum_order = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         default=Decimal('0.00')
     )
     
-    # الحد الأقصى للخصم (للنسبة المئوية)
+
     maximum_discount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -209,12 +209,12 @@ class Coupon(models.Model):
         blank=True
     )
     
-    # حدود الاستخدام
+
     usage_limit = models.PositiveIntegerField(null=True, blank=True)
     usage_limit_per_user = models.PositiveIntegerField(default=1)
     times_used = models.PositiveIntegerField(default=0)
     
-    # صلاحية الكوبون
+
     valid_from = models.DateTimeField()
     valid_until = models.DateTimeField()
     

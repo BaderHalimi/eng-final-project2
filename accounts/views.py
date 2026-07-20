@@ -21,7 +21,7 @@ from django.conf import settings
 
 from .models import CustomUser, Address, UserActivity
 from .forms import (
-    SecureRegistrationForm, SecureLoginForm, 
+    SecureRegistrationForm, SecureLoginForm,
     SecurePasswordChangeForm, ProfileUpdateForm, AddressForm
 )
 
@@ -64,7 +64,7 @@ def register_view(request):
     - Input validation
     - Password strength check
     """
-    # Rate limiting - 5 محاولات تسجيل في الساعة
+
     ip = get_client_ip(request)
     cache_key = f"register_attempts_{ip}"
     attempts = cache.get(cache_key, 0)
@@ -80,13 +80,13 @@ def register_view(request):
             user.email = user.email.lower()
             user.save()
             
-            # إنشاء رمز التحقق من البريد
+
             user.generate_email_verification_token()
             
-            # تسجيل النشاط
+
             log_activity(user, 'login', request)
             
-            # تسجيل الدخول تلقائياً (بعد التحقق من البريد في الإنتاج)
+
             login(request, user)
             
             logger.info(f"New user registered: {user.email}")
@@ -94,7 +94,7 @@ def register_view(request):
             
             return redirect('products:product_list')
         else:
-            # زيادة عداد المحاولات
+
             cache.set(cache_key, attempts + 1, 3600)
     else:
         form = SecureRegistrationForm()
@@ -119,7 +119,7 @@ def login_view(request):
     
     ip = get_client_ip(request)
     
-    # Rate limiting على مستوى IP
+
     ip_cache_key = f"login_attempts_ip_{ip}"
     ip_attempts = cache.get(ip_cache_key, 0)
     
@@ -131,7 +131,7 @@ def login_view(request):
         form = SecureLoginForm(request, data=request.POST)
         email = request.POST.get('username', '').lower()
         
-        # التحقق من قفل الحساب
+
         try:
             user = CustomUser.objects.get(email=email)
             if user.is_locked_out():
@@ -144,42 +144,42 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             
-            # إعادة تعيين محاولات الفشل
+
             user.reset_failed_logins()
             user.last_login_ip = ip
             user.save(update_fields=['last_login_ip'])
             
-            # تسجيل الدخول
+
             login(request, user)
             
-            # إعدادات الجلسة
+
             if not form.cleaned_data.get('remember_me'):
-                request.session.set_expiry(0)  # تنتهي عند إغلاق المتصفح
+                request.session.set_expiry(0)
             else:
-                request.session.set_expiry(1209600)  # أسبوعين
+                request.session.set_expiry(1209600)
             
-            # تدوير معرف الجلسة للحماية من Session Fixation
+
             request.session.cycle_key()
             
-            # تسجيل النشاط
+
             log_activity(user, 'login', request)
             
             logger.info(f"User logged in: {user.email} from {ip}")
             
-            # إعادة التوجيه الآمنة
+
             next_url = request.GET.get('next', '')
             if next_url and next_url.startswith('/'):
                 return redirect(next_url)
             return redirect('products:product_list')
         else:
-            # تسجيل محاولة فاشلة
-            cache.set(ip_cache_key, ip_attempts + 1, 1800)  # 30 دقيقة
+
+            cache.set(ip_cache_key, ip_attempts + 1, 1800)
             
             if user:
                 user.record_failed_login()
                 log_activity(user, 'failed_login', request, {'reason': 'invalid_password'})
             else:
-                # تسجيل محاولة بإيميل غير موجود (بدون كشف ذلك)
+
                 UserActivity.objects.create(
                     user=None,
                     activity_type='failed_login',
@@ -188,7 +188,7 @@ def login_view(request):
                     extra_data={'email': email, 'reason': 'user_not_found'}
                 )
             
-            # رسالة عامة لا تكشف ما إذا كان الإيميل موجوداً
+
             messages.error(request, 'البريد الإلكتروني أو كلمة المرور غير صحيحة')
     else:
         form = SecureLoginForm()
@@ -228,19 +228,19 @@ def profile_view(request):
     else:
         form = ProfileUpdateForm(instance=request.user)
     
-    # إحصائيات المستخدم
+
     orders = Order.objects.filter(user=request.user)
     orders_count = orders.count()
     completed_orders = orders.filter(status='delivered').count()
     total_spent = orders.filter(status='delivered').aggregate(total=Sum('total'))['total'] or 0
     
-    # المفضلة
+
     wishlist_count = Wishlist.objects.filter(user=request.user).count()
     
-    # آخر الطلبات
+
     recent_orders = orders.order_by('-created_at')[:5]
     
-    # العنوان الافتراضي
+
     default_address = request.user.addresses.filter(is_default=True).first()
     if not default_address:
         default_address = request.user.addresses.first()
@@ -275,7 +275,7 @@ def change_password_view(request):
             user.password_changed_at = timezone.now()
             user.save(update_fields=['password_changed_at'])
             
-            # تحديث الجلسة
+
             update_session_auth_hash(request, user)
             
             log_activity(user, 'password_change', request)
@@ -300,10 +300,10 @@ def add_address_view(request):
         address_type = request.POST.get('address_type', 'shipping')
         
         if form.is_valid():
-            # استخراج is_default من cleaned_data
+
             is_default = form.cleaned_data.pop('is_default', False)
             
-            # إذا كان العنوان الافتراضي، أزل الافتراضي من العناوين الأخرى
+
             if is_default:
                 Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
             
@@ -355,10 +355,10 @@ def set_default_address_view(request, address_id):
     """تعيين عنوان كافتراضي"""
     address = get_object_or_404(Address, id=address_id, user=request.user)
     
-    # إزالة الافتراضي من العناوين الأخرى
+
     Address.objects.filter(user=request.user, is_default=True).update(is_default=False)
     
-    # تعيين هذا العنوان كافتراضي
+
     address.is_default = True
     address.save()
     
@@ -371,14 +371,14 @@ def set_default_address_view(request, address_id):
 @require_http_methods(["POST"])
 def delete_address_view(request, address_id):
     """حذف عنوان"""
-    # أمان: التأكد من أن العنوان للمستخدم الحالي
+
     address = get_object_or_404(Address, id=address_id, user=request.user)
     address.delete()
     messages.success(request, 'تم حذف العنوان')
     return redirect('accounts:profile')
 
 
-# Password Reset Views with security enhancements
+
 class SecurePasswordResetView(PasswordResetView):
     """
     إعادة تعيين كلمة المرور - آمن
@@ -388,7 +388,7 @@ class SecurePasswordResetView(PasswordResetView):
     success_url = reverse_lazy('accounts:password_reset_done')
     
     def form_valid(self, form):
-        # Rate limiting
+
         ip = get_client_ip(self.request)
         cache_key = f"password_reset_{ip}"
         attempts = cache.get(cache_key, 0)
@@ -407,10 +407,10 @@ class SecurePasswordResetConfirmView(PasswordResetConfirmView):
     success_url = reverse_lazy('accounts:password_reset_complete')
 
 
-# ====================================================================
-# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
-# نقاط نهاية ضعيفة للاختبار الأمني فقط
-# ====================================================================
+
+
+
+
 
 import pickle
 import base64
@@ -420,7 +420,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-# GT-01: SQL Injection in user search
+
 def user_search(request):
     """
     VULNERABLE: SQL Injection
@@ -428,7 +428,7 @@ def user_search(request):
     """
     query = request.GET.get('q', '')
     
-    # VULNERABILITY: Direct SQL query without parameterization
+
     with connection.cursor() as cursor:
         sql = f"SELECT id, email, first_name, last_name FROM accounts_customuser WHERE email LIKE '%{query}%' OR first_name LIKE '%{query}%'"
         cursor.execute(sql)
@@ -447,7 +447,7 @@ def user_search(request):
     return JsonResponse({'users': users})
 
 
-# GT-02: Insecure Deserialization via Pickle
+
 def export_user_data(request):
     """
     VULNERABLE: Insecure Deserialization
@@ -456,7 +456,7 @@ def export_user_data(request):
     data_param = request.GET.get('data', '')
     
     if data_param:
-        # VULNERABILITY: Unpickling untrusted data
+
         try:
             decoded = base64.b64decode(data_param)
             user_data = pickle.loads(decoded)
@@ -464,7 +464,7 @@ def export_user_data(request):
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=400)
     
-    # Export current user data
+
     if request.user.is_authenticated:
         data = {
             'email': request.user.email,
@@ -477,7 +477,7 @@ def export_user_data(request):
     return JsonResponse({'error': 'Not authenticated'}, status=401)
 
 
-# GT-03: Sensitive Data Exposure - User Information
+
 def debug_user_info(request):
     """
     VULNERABLE: Sensitive Data Exposure
@@ -491,11 +491,11 @@ def debug_user_info(request):
     try:
         user = CustomUser.objects.get(id=user_id)
         
-        # VULNERABILITY: Exposing sensitive data including password hash
+
         debug_info = {
             'id': str(user.id),
             'email': user.email,
-            'password_hash': user.password,  # EXPOSED!
+            'password_hash': user.password,
             'is_staff': user.is_staff,
             'is_superuser': user.is_superuser,
             'last_login': str(user.last_login),
@@ -507,8 +507,8 @@ def debug_user_info(request):
         return JsonResponse({'error': 'User not found'}, status=404)
 
 
-# GT-04: CSRF + IDOR in Email Update
-@csrf_exempt  # VULNERABILITY: CSRF disabled
+
+@csrf_exempt
 def update_email(request):
     """
     VULNERABLE: CSRF + IDOR
@@ -524,7 +524,7 @@ def update_email(request):
         return JsonResponse({'error': 'user_id and email required'}, status=400)
     
     try:
-        # VULNERABILITY: No authentication check, no ownership verification
+
         user = CustomUser.objects.get(id=user_id)
         user.email = new_email
         user.save()
@@ -534,7 +534,7 @@ def update_email(request):
         return JsonResponse({'error': 'User not found'}, status=404)
 
 
-# GT-05: Weak Cryptographic Algorithm (MD5)
+
 def weak_password_reset(request):
     """
     VULNERABLE: Weak Cryptographic Algorithm
@@ -548,7 +548,7 @@ def weak_password_reset(request):
     try:
         user = CustomUser.objects.get(email=email)
         
-        # VULNERABILITY: Using weak MD5 hash as reset token
+
         reset_token = hashlib.md5(email.encode()).hexdigest()
         
         reset_link = f"/accounts/reset/{reset_token}/"
@@ -563,7 +563,7 @@ def weak_password_reset(request):
         return JsonResponse({'error': 'User not found'}, status=404)
 
 
-# GT-06: Broken Access Control - Admin Actions Without Auth
+
 def admin_action(request):
     """
     VULNERABLE: Broken Access Control
@@ -578,7 +578,7 @@ def admin_action(request):
     try:
         user = CustomUser.objects.get(id=user_id)
         
-        # VULNERABILITY: No authentication or authorization check
+
         if action == 'make_admin':
             user.is_staff = True
             user.is_superuser = True

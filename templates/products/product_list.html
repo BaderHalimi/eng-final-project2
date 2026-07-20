@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container">
-    <!-- Breadcrumb -->
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'products:home' %}" class="text-decoration-none"><i class="bi bi-house"></i> الرئيسية</a></li>
@@ -13,7 +13,7 @@
     </nav>
 
     <div class="row">
-        <!-- Sidebar Filters -->
+
         <div class="col-lg-3 mb-4">
             <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 100px;">
                 <div class="card-header bg-white border-0 py-3">
@@ -21,13 +21,13 @@
                 </div>
                 <div class="card-body">
                     <form method="get" action="" id="filter-form">
-                        <!-- Search -->
+
                         <div class="mb-4">
                             <label class="form-label fw-semibold"><i class="bi bi-search me-1"></i>البحث</label>
                             <input type="text" name="q" class="form-control" placeholder="ابحث عن منتج..." value="{{ request.GET.q }}">
                         </div>
                         
-                        <!-- Categories -->
+
                         <div class="mb-4">
                             <label class="form-label fw-semibold"><i class="bi bi-tags me-1"></i>التصنيفات</label>
                             <div class="list-group list-group-flush">
@@ -43,7 +43,7 @@
                             </div>
                         </div>
                         
-                        <!-- Price Range -->
+
                         <div class="mb-4">
                             <label class="form-label fw-semibold"><i class="bi bi-cash me-1"></i>السعر</label>
                             <div class="row g-2">
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         
-                        <!-- Availability -->
+
                         <div class="mb-4">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" name="in_stock" id="in_stock" {% if request.GET.in_stock %}checked{% endif %}>
@@ -79,9 +79,9 @@
             </div>
         </div>
 
-        <!-- Products Grid -->
+
         <div class="col-lg-9">
-            <!-- Toolbar -->
+
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
                 <div>
                     <h4 class="mb-1 fw-bold">
@@ -99,7 +99,7 @@
                 </div>
                 
                 <div class="d-flex gap-2 align-items-center">
-                    <!-- Sort -->
+
                     <select name="sort" class="form-select" style="width: auto;" onchange="this.form.submit()" form="filter-form">
                         <option value="">الترتيب الافتراضي</option>
                         <option value="price_asc" {% if request.GET.sort == 'price_asc' %}selected{% endif %}>السعر: من الأقل</option>
@@ -108,7 +108,7 @@
                         <option value="rating" {% if request.GET.sort == 'rating' %}selected{% endif %}>الأعلى تقييماً</option>
                     </select>
                     
-                    <!-- View Toggle -->
+
                     <div class="btn-group" role="group">
                         <button type="button" class="btn btn-outline-secondary active" id="grid-view">
                             <i class="bi bi-grid-3x3-gap"></i>
@@ -120,13 +120,13 @@
                 </div>
             </div>
 
-            <!-- Products -->
+
             {% if products %}
             <div class="row g-4" id="products-grid">
                 {% for product in products %}
                 <div class="col-lg-4 col-md-6 col-6 product-col">
                     <div class="card product-card shadow-sm h-100">
-                        <!-- Badges -->
+
                         <div class="product-badges">
                             {% if product.discount_price %}
                             <span class="badge badge-sale"><i class="bi bi-percent"></i> خصم</span>
@@ -136,14 +136,14 @@
                             {% endif %}
                         </div>
                         
-                        <!-- Actions -->
+
                         <div class="product-actions">
                             <button class="action-btn wishlist" data-product-id="{{ product.id }}" title="أضف للمفضلة">
                                 <i class="bi bi-heart"></i>
                             </button>
                         </div>
                         
-                        <!-- Image -->
+
                         <a href="{% url 'products:product_detail' product.slug %}">
                             {% if product.image %}
                             <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
@@ -167,7 +167,7 @@
                                 </a>
                             </h6>
                             
-                            <!-- Rating -->
+
                             <div class="rating mb-2">
                                 {% with avg=product.average_rating|default:0 %}
                                 {% for i in "12345" %}
@@ -183,7 +183,7 @@
                                 <small class="text-muted ms-1">({{ product.reviews.count }})</small>
                             </div>
                             
-                            <!-- Price -->
+
                             <div class="d-flex align-items-center gap-2">
                                 <span class="product-price">${{ product.final_price }}</span>
                                 {% if product.discount_price %}
@@ -208,7 +208,7 @@
                 {% endfor %}
             </div>
 
-            <!-- Pagination -->
+
             {% if is_paginated %}
             <nav class="mt-5">
                 <ul class="pagination justify-content-center">
@@ -244,7 +244,7 @@
             {% endif %}
 
             {% else %}
-            <!-- No Products -->
+
             <div class="text-center py-5">
                 <div class="mb-4">
                     <i class="bi bi-inbox text-muted" style="font-size: 5rem;"></i>
@@ -263,7 +263,7 @@
 
 {% block extra_js %}
 <script>
-// Add to cart
+
 document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
     btn.addEventListener('click', async function() {
         const productId = this.dataset.productId;
@@ -291,7 +291,7 @@ document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
     });
 });
 
-// Wishlist
+
 document.querySelectorAll('.wishlist').forEach(btn => {
     btn.addEventListener('click', async function() {
         const productId = this.dataset.productId;
@@ -312,7 +312,7 @@ document.querySelectorAll('.wishlist').forEach(btn => {
     });
 });
 
-// View toggle (grid/list)
+
 document.getElementById('grid-view')?.addEventListener('click', function() {
     this.classList.add('active');
     document.getElementById('list-view').classList.remove('active');

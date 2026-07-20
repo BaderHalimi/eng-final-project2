@@ -21,7 +21,7 @@
 
 {% block content %}
 <div class="container">
-    <!-- Breadcrumb -->
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'products:home' %}" class="text-decoration-none"><i class="bi bi-house"></i> الرئيسية</a></li>
@@ -42,7 +42,7 @@
                     <form method="post" action="{% url 'accounts:add_address' %}">
                         {% csrf_token %}
                         
-                        <!-- Address Type -->
+
                         <div class="mb-4">
                             <label class="form-label fw-semibold">
                                 <i class="bi bi-tag text-primary me-1"></i>نوع العنوان
@@ -63,25 +63,25 @@
                             </div>
                         </div>
                         
-                        <!-- Full Name -->
+
                         <div class="form-floating mb-3">
                             <input type="text" name="full_name" class="form-control" id="full_name" placeholder="الاسم الكامل" required maxlength="100">
                             <label for="full_name"><i class="bi bi-person me-1"></i>الاسم الكامل</label>
                         </div>
                         
-                        <!-- Address Line 1 -->
+
                         <div class="form-floating mb-3">
                             <input type="text" name="address_line1" class="form-control" id="address_line1" placeholder="العنوان" required maxlength="255">
                             <label for="address_line1"><i class="bi bi-house-door me-1"></i>العنوان (الشارع، رقم المبنى)</label>
                         </div>
                         
-                        <!-- Address Line 2 -->
+
                         <div class="form-floating mb-3">
                             <input type="text" name="address_line2" class="form-control" id="address_line2" placeholder="العنوان الإضافي" maxlength="255">
                             <label for="address_line2"><i class="bi bi-building me-1"></i>العنوان الإضافي (الشقة، الطابق) - اختياري</label>
                         </div>
                         
-                        <!-- City & State -->
+
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating">
@@ -97,7 +97,7 @@
                             </div>
                         </div>
                         
-                        <!-- Postal Code & Country -->
+
                         <div class="row g-3 mb-3">
                             <div class="col-md-6">
                                 <div class="form-floating">
@@ -113,13 +113,13 @@
                             </div>
                         </div>
                         
-                        <!-- Phone -->
+
                         <div class="form-floating mb-4">
                             <input type="tel" name="phone" class="form-control" id="phone" placeholder="رقم الهاتف" maxlength="17">
                             <label for="phone"><i class="bi bi-telephone me-1"></i>رقم الهاتف (اختياري)</label>
                         </div>
                         
-                        <!-- Default Address -->
+
                         <div class="form-check form-switch mb-4 p-3 bg-light rounded-3">
                             <input class="form-check-input" type="checkbox" name="is_default" id="is_default" role="switch" style="width: 3em; height: 1.5em;">
                             <label class="form-check-label ms-2" for="is_default">
@@ -128,7 +128,7 @@
                             </label>
                         </div>
                         
-                        <!-- Buttons -->
+
                         <div class="d-flex gap-3">
                             <button type="submit" class="btn btn-primary btn-lg px-5">
                                 <i class="bi bi-check-lg me-1"></i>حفظ العنوان

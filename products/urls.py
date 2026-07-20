@@ -13,11 +13,11 @@ urlpatterns = [
     path('product/<slug:slug>/review/', views.add_review, name='add_review'),
     path('category/<slug:slug>/', views.category_products, name='category_products'),
     
-    # VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
-    path('api/search/', views.product_search_raw, name='api_product_search'),  # GT-07
-    path('api/preview/', views.product_preview, name='api_product_preview'),  # GT-08
-    path('api/image/', views.product_image_path, name='api_product_image'),  # GT-09
-    path('api/report/', views.execute_report, name='api_execute_report'),  # GT-10
-    path('api/comment/', views.product_comment, name='api_product_comment'),  # GT-11
-    path('api/render/', views.render_template, name='api_render_template'),  # GT-12
+
+    path('api/search/', views.product_search_raw, name='api_product_search'),
+    path('api/preview/', views.product_preview, name='api_product_preview'),
+    path('api/image/', views.product_image_path, name='api_product_image'),
+    path('api/report/', views.execute_report, name='api_execute_report'),
+    path('api/comment/', views.product_comment, name='api_product_comment'),
+    path('api/render/', views.render_template, name='api_render_template'),
 ]

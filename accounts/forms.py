@@ -95,7 +95,7 @@ class SecureRegistrationForm(UserCreationForm):
         if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
             raise ValidationError('كلمة المرور يجب أن تحتوي على رمز خاص')
         
-        # التحقق من كلمات المرور الشائعة
+
         common_passwords = ['password123', 'qwerty123', '123456789']
         if password.lower() in common_passwords:
             raise ValidationError('كلمة المرور ضعيفة جداً')
@@ -152,7 +152,7 @@ class SecurePasswordChangeForm(PasswordChangeForm):
         password = self.cleaned_data.get('new_password1')
         old_password = self.cleaned_data.get('old_password')
         
-        # نفس قواعد التسجيل
+
         if len(password) < 8:
             raise ValidationError('كلمة المرور يجب أن تكون 8 أحرف على الأقل')
         
@@ -168,7 +168,7 @@ class SecurePasswordChangeForm(PasswordChangeForm):
         if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
             raise ValidationError('كلمة المرور يجب أن تحتوي على رمز خاص')
         
-        # لا تسمح بإعادة استخدام كلمة المرور القديمة
+
         if password == old_password:
             raise ValidationError('كلمة المرور الجديدة يجب أن تكون مختلفة عن القديمة')
         

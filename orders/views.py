@@ -53,7 +53,7 @@ def checkout_view(request):
         messages.warning(request, 'السلة فارغة')
         return redirect('cart:cart')
     
-    # التحقق من توفر جميع المنتجات
+
     for item in items:
         if not item.is_available:
             messages.error(request, f'المنتج "{item.product.name}" غير متوفر بالكمية المطلوبة')
@@ -61,7 +61,7 @@ def checkout_view(request):
     
     addresses = request.user.addresses.all()
     
-    # الكوبون المطبق (من الجلسة)
+
     applied_coupon = None
     discount = Decimal('0.00')
     coupon_code = request.session.get('coupon_code')
@@ -75,7 +75,7 @@ def checkout_view(request):
             del request.session['coupon_code']
     
     subtotal = cart.subtotal
-    tax = subtotal * Decimal('0.15')  # 15% ضريبة
+    tax = subtotal * Decimal('0.15')
     shipping = Decimal('10.00') if subtotal < 100 else Decimal('0.00')
     total = subtotal + tax + shipping - discount
     
@@ -106,7 +106,7 @@ def place_order(request):
     - تخفيض المخزون بشكل آمن
     - Rate limiting
     """
-    # Rate limiting
+
     cache_key = f"place_order_{request.user.id}"
     if cache.get(cache_key):
         return JsonResponse({
@@ -125,16 +125,16 @@ def place_order(request):
         shipping_address_id = data.get('shipping_address_id')
         billing_address_id = data.get('billing_address_id')
         payment_method = data.get('payment_method')
-        notes = data.get('notes', '')[:500]  # تحديد الطول
+        notes = data.get('notes', '')[:500]
     except (json.JSONDecodeError, TypeError):
         return JsonResponse({'success': False, 'error': 'بيانات غير صالحة'}, status=400)
     
-    # التحقق من صحة طريقة الدفع
+
     valid_methods = ['cod', 'credit_card', 'paypal', 'bank_transfer']
     if payment_method not in valid_methods:
         return JsonResponse({'success': False, 'error': 'طريقة دفع غير صالحة'}, status=400)
     
-    # الحصول على العناوين
+
     try:
         shipping_address = Address.objects.get(id=shipping_address_id, user=request.user)
         billing_address = Address.objects.get(id=billing_address_id, user=request.user)
@@ -142,20 +142,20 @@ def place_order(request):
         return JsonResponse({'success': False, 'error': 'العنوان غير موجود'}, status=400)
     
     with transaction.atomic():
-        # إعادة حساب المبالغ للأمان
+
         subtotal = cart.subtotal
         tax = subtotal * Decimal('0.15')
         shipping_cost = Decimal('10.00') if subtotal < 100 else Decimal('0.00')
         discount = Decimal('0.00')
         
-        # التحقق من الكوبون
+
         coupon = None
         coupon_code = request.session.get('coupon_code')
         if coupon_code:
             try:
                 coupon = Coupon.objects.select_for_update().get(code=coupon_code)
                 if coupon.is_valid():
-                    # التحقق من عدد استخدامات المستخدم
+
                     user_usages = CouponUsage.objects.filter(
                         coupon=coupon, user=request.user
                     ).count()
@@ -168,7 +168,7 @@ def place_order(request):
         
         total = subtotal + tax + shipping_cost - discount
         
-        # التحقق من المخزون وتخفيضه
+
         for item in items:
             product = item.product
             if item.quantity > product.stock:
@@ -177,11 +177,11 @@ def place_order(request):
                     'error': f'الكمية المتوفرة من "{product.name}" هي {product.stock} فقط'
                 }, status=400)
             
-            # تخفيض المخزون
+
             product.stock -= item.quantity
             product.save(update_fields=['stock'])
         
-        # إنشاء الطلب
+
         order = Order.objects.create(
             user=request.user,
             status='pending',
@@ -217,7 +217,7 @@ def place_order(request):
             user_agent=request.META.get('HTTP_USER_AGENT', '')[:500]
         )
         
-        # إنشاء عناصر الطلب
+
         for item in items:
             OrderItem.objects.create(
                 order=order,
@@ -228,7 +228,7 @@ def place_order(request):
                 total_price=item.total_price
             )
         
-        # تسجيل استخدام الكوبون
+
         if coupon and discount > 0:
             CouponUsage.objects.create(
                 coupon=coupon,
@@ -239,15 +239,15 @@ def place_order(request):
             coupon.times_used += 1
             coupon.save(update_fields=['times_used'])
         
-        # تفريغ السلة
+
         cart.items.all().delete()
         
-        # مسح الكوبون من الجلسة
+
         if 'coupon_code' in request.session:
             del request.session['coupon_code']
     
-    # Rate limiting
-    cache.set(cache_key, True, 60)  # دقيقة واحدة
+
+    cache.set(cache_key, True, 60)
     
     logger.info(f"Order {order.order_number} created by {request.user.email}")
     
@@ -300,7 +300,7 @@ def cancel_order(request, order_id):
         }, status=400)
     
     with transaction.atomic():
-        # إعادة المخزون
+
         for item in order.items.all():
             if item.product:
                 item.product.stock += item.quantity
@@ -344,7 +344,7 @@ def apply_coupon(request):
     if not coupon.is_valid():
         return JsonResponse({'success': False, 'error': 'الكوبون منتهي الصلاحية'}, status=400)
     
-    # التحقق من عدد استخدامات المستخدم
+
     user_usages = CouponUsage.objects.filter(coupon=coupon, user=request.user).count()
     if user_usages >= coupon.usage_limit_per_user:
         return JsonResponse({
@@ -354,14 +354,14 @@ def apply_coupon(request):
     
     cart = get_or_create_cart(request)
     
-    # التحقق من الحد الأدنى للطلب
+
     if cart.subtotal < coupon.minimum_order:
         return JsonResponse({
             'success': False,
             'error': f'الحد الأدنى للطلب هو {coupon.minimum_order}'
         }, status=400)
     
-    # حفظ الكوبون في الجلسة
+
     request.session['coupon_code'] = code
     
     discount = coupon.calculate_discount(cart.subtotal)
@@ -387,10 +387,10 @@ def remove_coupon(request):
     })
 
 
-# ====================================================================
-# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
-# نقاط نهاية ضعيفة للاختبار الأمني فقط
-# ====================================================================
+
+
+
+
 
 import xml.etree.ElementTree as ET
 import yaml
@@ -399,7 +399,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 
-# GT-13: SQL Injection in Order Search
+
 def order_search(request):
     """
     VULNERABLE: SQL Injection
@@ -408,7 +408,7 @@ def order_search(request):
     order_number = request.GET.get('order_number', '')
     status = request.GET.get('status', '')
     
-    # VULNERABILITY: Direct SQL without parameterization
+
     with connection.cursor() as cursor:
         sql = f"SELECT id, order_number, total, status FROM orders_order WHERE order_number LIKE '%{order_number}%'"
         if status:
@@ -429,7 +429,7 @@ def order_search(request):
     return JsonResponse({'orders': orders})
 
 
-# GT-14: XXE - XML External Entity Injection
+
 @csrf_exempt
 def import_orders_xml(request):
     """
@@ -445,7 +445,7 @@ def import_orders_xml(request):
         return JsonResponse({'error': 'No XML data provided'}, status=400)
     
     try:
-        # VULNERABILITY: No XXE protection
+
         root = ET.fromstring(xml_data)
         
         orders_imported = []
@@ -466,7 +466,7 @@ def import_orders_xml(request):
         return JsonResponse({'error': f'XML parsing error: {str(e)}'}, status=400)
 
 
-# GT-15: Insecure YAML Deserialization
+
 @csrf_exempt
 def import_orders_yaml(request):
     """
@@ -482,7 +482,7 @@ def import_orders_yaml(request):
         return JsonResponse({'error': 'No YAML data provided'}, status=400)
     
     try:
-        # VULNERABILITY: Using unsafe yaml.load instead of yaml.safe_load
+
         data = yaml.load(yaml_data, Loader=yaml.Loader)
         
         return JsonResponse({
@@ -494,13 +494,13 @@ def import_orders_yaml(request):
         return JsonResponse({'error': f'YAML error: {str(e)}'}, status=400)
 
 
-# GT-16: IDOR in Order Invoice
+
 def order_invoice(request, order_id):
     """
     VULNERABLE: IDOR (Insecure Direct Object Reference)
     ثغرة الوصول المباشر غير الآمن للكائنات
     """
-    # VULNERABILITY: No authentication or ownership check
+
     try:
         order = Order.objects.get(id=order_id)
         
@@ -520,7 +520,7 @@ def order_invoice(request, order_id):
         return JsonResponse({'error': 'Order not found'}, status=404)
 
 
-# GT-17: Mass Assignment in Order Status Update
+
 @csrf_exempt
 def update_order_status(request):
     """
@@ -543,7 +543,7 @@ def update_order_status(request):
     try:
         order = Order.objects.get(id=order_id)
         
-        # VULNERABILITY: Accepting all fields from user input - mass assignment
+
         for key, value in data.items():
             if hasattr(order, key) and key != 'id':
                 setattr(order, key, value)
@@ -563,13 +563,13 @@ def update_order_status(request):
         return JsonResponse({'error': 'Order not found'}, status=404)
 
 
-# GT-18: Information Disclosure - Export All Orders
+
 def export_orders(request):
     """
     VULNERABLE: Information Disclosure - No Authentication
     ثغرة كشف المعلومات - بدون مصادقة
     """
-    # VULNERABILITY: No authentication check
+
     orders = Order.objects.all().select_related('user')[:100]
     
     orders_data = []

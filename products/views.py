@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 def home_view(request):
     """الصفحة الرئيسية"""
     featured_products = Product.objects.filter(
-        is_active=True, 
+        is_active=True,
         is_featured=True
     ).select_related('category').prefetch_related('reviews')[:8]
     
@@ -34,7 +34,7 @@ def home_view(request):
         is_active=True
     ).select_related('category').order_by('-created_at')[:8]
     
-    # الأكثر مبيعاً - المنتجات الأعلى تقييماً
+
     best_sellers = Product.objects.filter(
         is_active=True
     ).select_related('category').prefetch_related('reviews').annotate(
@@ -55,7 +55,7 @@ def home_view(request):
 class ProductListView(ListView):
     """
     عرض قائمة المنتجات - آمن
-    أمان: 
+    أمان:
     - Parameterized queries (تلقائي في Django ORM)
     - Rate limiting (via cache)
     - Input sanitization
@@ -66,22 +66,22 @@ class ProductListView(ListView):
     paginate_by = 12
     
     def get_queryset(self):
-        # فقط المنتجات النشطة
+
         queryset = Product.objects.filter(is_active=True).select_related('category')
         
-        # البحث
+
         q = self.request.GET.get('q', '').strip()
         if q:
             queryset = queryset.filter(
                 Q(name__icontains=q) | Q(description__icontains=q)
             )
         
-        # التصنيف (بالـ slug)
+
         category_slug = self.request.GET.get('category', '').strip()
         if category_slug:
             queryset = queryset.filter(category__slug=category_slug)
         
-        # السعر
+
         min_price = self.request.GET.get('min_price', '').strip()
         max_price = self.request.GET.get('max_price', '').strip()
         if min_price:
@@ -95,15 +95,15 @@ class ProductListView(ListView):
             except ValueError:
                 pass
         
-        # المتوفر فقط
+
         if self.request.GET.get('in_stock'):
             queryset = queryset.filter(stock__gt=0)
         
-        # العروض فقط
+
         if self.request.GET.get('sale'):
             queryset = queryset.filter(discount_price__isnull=False)
         
-        # الترتيب
+
         sort = self.request.GET.get('sort', '')
         if sort == 'price_asc':
             queryset = queryset.order_by('price')
@@ -122,7 +122,7 @@ class ProductListView(ListView):
         context = super().get_context_data(**kwargs)
         context['categories'] = Category.objects.filter(is_active=True)
         
-        # الحصول على التصنيف الحالي للعرض
+
         category_slug = self.request.GET.get('category', '')
         if category_slug:
             context['current_category'] = Category.objects.filter(slug=category_slug).first()
@@ -146,24 +146,24 @@ class ProductDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         product = self.object
         
-        # التقييمات المعتمدة فقط
+
         context['reviews'] = product.reviews.filter(
             is_approved=True
         ).select_related('user').order_by('-created_at')[:10]
         
-        # متوسط التقييم
+
         context['avg_rating'] = product.reviews.filter(
             is_approved=True
         ).aggregate(avg=Avg('rating'))['avg'] or 0
         
-        # نموذج التقييم
+
         if self.request.user.is_authenticated:
-            # التحقق من أن المستخدم لم يقيّم من قبل
+
             existing_review = product.reviews.filter(user=self.request.user).exists()
             if not existing_review:
                 context['review_form'] = ReviewForm()
         
-        # منتجات مشابهة
+
         context['related_products'] = Product.objects.filter(
             category=product.category,
             is_active=True
@@ -186,7 +186,7 @@ def add_review(request, slug):
     """
     product = get_object_or_404(Product, slug=slug, is_active=True)
     
-    # أمان: Rate limiting - تقييم واحد كل 5 دقائق
+
     cache_key = f"review_rate_{request.user.id}"
     if cache.get(cache_key):
         return JsonResponse({
@@ -194,7 +194,7 @@ def add_review(request, slug):
             'error': 'يرجى الانتظار قبل إضافة تقييم آخر'
         }, status=429)
     
-    # التحقق من عدم وجود تقييم سابق
+
     if Review.objects.filter(product=product, user=request.user).exists():
         return JsonResponse({
             'success': False,
@@ -206,11 +206,11 @@ def add_review(request, slug):
         review = form.save(commit=False)
         review.product = product
         review.user = request.user
-        review.is_approved = False  # يحتاج موافقة
+        review.is_approved = False
         review.save()
         
-        # تسجيل Rate limit
-        cache.set(cache_key, True, 300)  # 5 دقائق
+
+        cache.set(cache_key, True, 300)
         
         logger.info(f"New review added by {request.user.email} for product {product.id}")
         
@@ -249,10 +249,10 @@ def category_products(request, slug):
     })
 
 
-# ====================================================================
-# VULNERABLE API ENDPOINTS - FOR SECURITY TESTING ONLY
-# نقاط نهاية ضعيفة للاختبار الأمني فقط
-# ====================================================================
+
+
+
+
 
 import os
 import subprocess
@@ -262,7 +262,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.template import Template, Context
 
 
-# GT-07: SQL Injection in Product Search
+
 def product_search_raw(request):
     """
     VULNERABLE: SQL Injection
@@ -271,7 +271,7 @@ def product_search_raw(request):
     query = request.GET.get('q', '')
     sort = request.GET.get('sort', 'name')
     
-    # VULNERABILITY: Direct SQL without parameterization
+
     with connection.cursor() as cursor:
         sql = f"SELECT id, name, price, stock FROM products_product WHERE name LIKE '%{query}%' ORDER BY {sort}"
         cursor.execute(sql)
@@ -290,7 +290,7 @@ def product_search_raw(request):
     return JsonResponse({'products': products})
 
 
-# GT-08: Reflected XSS in Product Preview
+
 def product_preview(request):
     """
     VULNERABLE: Reflected XSS
@@ -299,7 +299,7 @@ def product_preview(request):
     name = request.GET.get('name', 'Product Name')
     description = request.GET.get('description', 'Product Description')
     
-    # VULNERABILITY: No output encoding
+
     html = f"""
     <html>
     <head><title>Product Preview</title></head>
@@ -313,7 +313,7 @@ def product_preview(request):
     return HttpResponse(html)
 
 
-# GT-09: Path Traversal in Product Image
+
 def product_image_path(request):
     """
     VULNERABLE: Path Traversal
@@ -324,7 +324,7 @@ def product_image_path(request):
     if not filename:
         return HttpResponse('Filename required', status=400)
     
-    # VULNERABILITY: No path validation
+
     file_path = os.path.join(settings.MEDIA_ROOT, 'products', filename)
     
     try:
@@ -337,7 +337,7 @@ def product_image_path(request):
         return HttpResponse(f'Error: {str(e)}', status=500)
 
 
-# GT-10: Command Injection in Report Generation
+
 def execute_report(request):
     """
     VULNERABLE: Command Injection
@@ -346,7 +346,7 @@ def execute_report(request):
     report_type = request.GET.get('type', 'sales')
     date = request.GET.get('date', '2026-01-01')
     
-    # VULNERABILITY: Unsafe command execution
+
     command = f"python manage.py generate_report --type {report_type} --date {date}"
     
     try:
@@ -356,7 +356,7 @@ def execute_report(request):
         return HttpResponse(f"<pre>Error: {e.output.decode()}</pre>", status=500)
 
 
-# GT-11: Stored XSS in Product Comments
+
 @csrf_exempt
 def product_comment(request):
     """
@@ -378,18 +378,18 @@ def product_comment(request):
     if not product_id or not comment:
         return JsonResponse({'error': 'product_id and comment required'}, status=400)
     
-    # VULNERABILITY: No sanitization of comment - stored XSS
-    # In production, this would be stored in database
-    # For demo, we'll just echo it back
+
+
+
     
     return JsonResponse({
         'status': 'success',
-        'comment': comment,  # XSS payload stored/returned unsanitized
+        'comment': comment,
         'message': 'Comment added successfully'
     })
 
 
-# GT-12: Server-Side Template Injection (SSTI)
+
 def render_template(request):
     """
     VULNERABLE: Server-Side Template Injection
@@ -398,7 +398,7 @@ def render_template(request):
     template_string = request.GET.get('template', 'Hello {{ name }}!')
     name = request.GET.get('name', 'User')
     
-    # VULNERABILITY: Unsafe template rendering
+
     template = Template(template_string)
     context = Context({'name': name, 'settings': settings})
     rendered = template.render(context)

@@ -15,13 +15,13 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('جاري إنشاء البيانات النموذجية...')
         
-        # الحصول على مستخدم admin
+
         admin_user = User.objects.filter(is_superuser=True).first()
         if not admin_user:
             self.stdout.write(self.style.ERROR('لم يتم العثور على مستخدم admin. أنشئ superuser أولاً.'))
             return
         
-        # إنشاء التصنيفات
+
         categories_data = [
             {
                 'name': 'الإلكترونيات',
@@ -77,9 +77,9 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f'  • تصنيف موجود: {category.name}')
         
-        # إنشاء المنتجات
+
         products_data = [
-            # الإلكترونيات
+
             {
                 'name': 'سماعات بلوتوث لاسلكية Pro',
                 'slug': 'wireless-bluetooth-headphones-pro',
@@ -109,7 +109,7 @@ class Command(BaseCommand):
                 'category': 'electronics',
                 'is_featured': True
             },
-            # الهواتف الذكية
+
             {
                 'name': 'هاتف Galaxy Ultra 2024',
                 'slug': 'galaxy-ultra-2024',
@@ -139,7 +139,7 @@ class Command(BaseCommand):
                 'category': 'smartphones',
                 'is_featured': False
             },
-            # أجهزة الكمبيوتر
+
             {
                 'name': 'لابتوب MacBook Pro M3',
                 'slug': 'macbook-pro-m3',
@@ -169,7 +169,7 @@ class Command(BaseCommand):
                 'category': 'computers',
                 'is_featured': False
             },
-            # الملابس الرجالية
+
             {
                 'name': 'قميص كلاسيكي أبيض',
                 'slug': 'classic-white-shirt',
@@ -199,7 +199,7 @@ class Command(BaseCommand):
                 'category': 'mens-clothing',
                 'is_featured': False
             },
-            # الملابس النسائية
+
             {
                 'name': 'فستان سهرة أنيق',
                 'slug': 'elegant-evening-dress',
@@ -229,7 +229,7 @@ class Command(BaseCommand):
                 'category': 'womens-clothing',
                 'is_featured': False
             },
-            # الأحذية
+
             {
                 'name': 'حذاء رياضي Nike Air Max',
                 'slug': 'nike-air-max-sneakers',
@@ -259,7 +259,7 @@ class Command(BaseCommand):
                 'category': 'shoes',
                 'is_featured': False
             },
-            # الساعات
+
             {
                 'name': 'ساعة Apple Watch Ultra',
                 'slug': 'apple-watch-ultra',
@@ -288,7 +288,7 @@ class Command(BaseCommand):
                 'category': 'watches',
                 'is_featured': False
             },
-            # الإكسسوارات
+
             {
                 'name': 'حقيبة جلدية فاخرة',
                 'slug': 'luxury-leather-bag',
