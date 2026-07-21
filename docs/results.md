@@ -169,52 +169,7 @@
 > **Note:** OWASP ZAP generated 15 additional security findings, including missing security headers and cookie-related issues (e.g., HSTS, CSP, HttpOnly, SameSite). Although several of these findings represent legitimate security hardening recommendations, they were **not included in the predefined Ground Truth dataset**. Therefore, they were treated as **False Positives** solely for the purpose of quantitative evaluation.
 ---
 
-## 4. SAST (Ground Truth)
-
-| ID Ground Truth | SAST ID | اسم الثغرة (Vulnerability Name) | الخطورة | الموقع (Location/URL) | الحالة |
-|---|---|---|---|---|---|
-| GT-01 | S-002, S-019, S-020 | SQL Injection in user search | Critical | /accounts/api/users/search/ | TP |
-| GT-03 | - | Sensitive Data Exposure - User Info | High | /accounts/api/users/debug/ | FN |
-| GT-04 | - | CSRF + IDOR in Email Update | High | /accounts/api/users/update-email/ | FN |
-| GT-06 | - | Broken Access Control (Admin Action) | Critical | /accounts/api/admin/action/ | FN |
-| GT-07 | S-017, S-019, S-020 | SQL Injection in Product Search | Critical | /api/search/ | TP |
-| GT-08 | - | Reflected XSS in Product Preview | Medium | /api/preview/ | FN |
-| GT-09 | - | Path Traversal in Product Image | High | /api/image/ | FN |
-| GT-10 | S-016, S-018, S-021, S-022, S-023 | Command Injection (Report Generation) | Critical | /api/report/ | TP |
-| GT-11 | - | Stored XSS in Product Comments | Medium | /api/comment/ | FN |
-| GT-12 | - | Server-Side Template Injection (SSTI) | Critical | /api/render/ | FN |
-| GT-13 | S-013, S-019, S-020 | SQL Injection in Order Search | Critical | /orders/api/search/ | TP |
-| GT-14 | S-012, S-014 | XXE - XML External Entity Injection | High | /orders/api/import/xml/ | TP |
-| GT-16 | - | IDOR in Order Invoice | High | /orders/api/invoice/ | FN |
-| GT-18 | - | Information Disclosure (Export Orders) | High | /orders/api/export/ | FN |
-| GT-19 | S-007, S-019, S-020 | SQL Injection in Dashboard Search | Critical | /dashboard/api/search/ | TP |
-| GT-20 | S-006, S-009, S-021, S-022, S-023 | Command Injection in Backup | Critical | /dashboard/api/backup/ | TP |
-| GT-21 | - | Path Traversal in Log File Reader | High | /dashboard/api/logs/ | FN |
-| GT-22 | - | Missing Authentication (Bulk Delete) | Critical | /dashboard/api/bulk-delete/ | FN |
-| GT-23 | - | Sensitive Information Disclosure | Critical | /dashboard/api/system-info/ | FN |
-| GT-24 | S-010 | Code Injection via eval() | Critical | /dashboard/api/eval/ | TP |
-| GT-25 | S-005, S-019, S-020 | SQL Injection in Cart Discount | Critical | /cart/api/discount/ | TP |
-| GT-26 | - | CSRF in Cart Update | Medium | /cart/api/update-ajax/ | FN |
-| GT-27 | - | IDOR in Cart Details | Medium | /cart/api/details/ | FN |
-| N/A | S-008 | Insecure hardcoded temporary directory | Medium | dashboard/views.py | FP |
-
-### مقاييس الأداء (Metrics)
-
-| المقياس (Metric) | القيمة (Value) | الملاحظات |
-|---|---|---|
-| إجمالي أهداف الحقيقة الأرضية (GT) | 23 | الثغرات المصنفة DAST في Ground Truth |
-| الإيجابيات الحقيقية (TP) | 9 | الثغرات التي تم اكتشافها بنجاح (معظمها ثغرات حقن) |
-| السلبيات الخاطئة (FN) | 14 | ثغرات موجودة فشل الفحص في رصدها (مثل IDOR وXSS) |
-| الإيجابيات الخاطئة (FP) | 1 | تنبيه (S-008) لم يكن ضمن أهداف Ground Truth |
-| نسبة الاستدعاء (Recall) | 39.13% | تعكس قدرة الفحص على تغطية 9 ثغرات من أصل 23 |
-| نسبة الدقة (Precision) | 90% | تعكس أن 9 من أصل 10 تنبيهات فريدة كانت صحيحة |
-| درجة F1 | 54.54% | المتوسط للأداء العام في هذا الاختبار |
-
-**الخلاصة (كما وردت في الملف):** أثبت النظام كفاءة عالية جداً في اكتشاف ثغرات (Injection) القابلة للاستغلال عبر الروابط، لكنه واجه صعوبة كبيرة في رصد ثغرات التحكم في الوصول والمنطق البرمجي في البيئة الديناميكية.
-
----
-
-## 5. SAST vs. scope "SAST, DAST, AI"
+## 4. SAST vs. scope "SAST, DAST, AI"
 
 | ID Ground Truth | SAST ID | اسم الثغرة (Vulnerability Name) | الخطورة (Severity) | الموقع (Location) | الحالة (Status) |
 |---|---|---|---|---|---|
@@ -249,7 +204,7 @@
 
 ---
 
-## 6. Rusalt DAST vs. scope "SAST, DAST, AI"
+## 5. Rusalt DAST vs. scope "SAST, DAST, AI"
 
 | معرف GT | ID ZAP | اسم الثغرة (Vulnerability Name) | الخطورة | الحالة |
 |---|---|---|---|---|
@@ -284,7 +239,7 @@
 
 ---
 
-## 7. AI vs. scope "SAST, DAST, AI"
+## 6. AI vs. scope "SAST, DAST, AI"
 
 | ID Ground Truth | ID AI | اسم الثغرة (Vulnerability Name) | الخطورة (Severity) | الموقع (Location) | الحالة |
 |---|---|---|---|---|---|
@@ -319,7 +274,7 @@
 
 ---
 
-## 8. Final Report
+## 7. Final Report
 
 ### 9.1 ملخص الإيجابيات الخاطئة (False Positives) حسب الأداة
 
