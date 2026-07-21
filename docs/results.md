@@ -276,7 +276,7 @@
 
 ## 7. Final Report
 
-### 9.1 ملخص الإيجابيات الخاطئة (False Positives) حسب الأداة
+### 9.1 ملخص الإيجابيات الخاطئة في النسخة الأمنة (False Positives) حسب الأداة
 
 | Tool | Total Findings (FP) | Precision | Main FP Categories |
 |---|---|---|---|
